@@ -78,3 +78,46 @@
     color: orange;
     transition: all 0.3s ease;
 }
+.page__body{
+    background: url(https://www.svgrepo.com/show/144612/cogwheels-symbols.svg);
+    background-size: 100px;
+    background-color: rgb(106, 50, 159);
+    height: 857px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    z-index: 999;
+}
+ .main__container{
+    background:rgb(125, 81, 148);
+    border-radius: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 857px;
+    width: 1600px;
+}
+h2{
+    padding: 20px 20px;
+}
+ .warehouse__icons__container{
+    justify-content: center;
+    align-items: center;
+    height: 857px;
+    width: 1520px;
+    border-color: rgb(136, 102, 127);
+    border-style:ridge;
+    margin-bottom: 60px;
+    padding: 30px 30px;
+    display: grid;
+    gap: 30px;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: 150px;
+    overflow:auto
+}
+img{
+    height: 100%;
+    width: auto;
+    background-size: contain;
+}
