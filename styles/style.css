@@ -81,7 +81,6 @@
 }
 #main-page-body{
     background-size: 100px;
-    background-color: rgb(106, 50, 159);
     height: 857px;
     display: flex;
     justify-content: center;
@@ -126,7 +125,7 @@ img{
 }
 
 /*--------------------------------------------------^^^^Home-Page^^^^------------------------------------------------------*/
-#admin-page-body{  
+.page__body{  
     background-size: 100px;
     background-color: rgb(125, 81, 148);
     height: 857px;
