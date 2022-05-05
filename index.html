@@ -12,7 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </head>
-<body>
+<body onload="fetchWarehouses();">
 
     <!--Navbar Section-->
     <nav class="navbar">
@@ -35,39 +35,14 @@
         </div>
     </nav>
     <div class="page__body" id="main-page-body">
-        <div class="main__container"  id="code">
+        <div class="main__container">
             <h2><b>Our warehouses</b></h2>
-            <div class="warehouse__icons__container">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
-                <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png">
+            <div class="warehouse__icons__container" id="index-page">
+                <!-- <div class="warehouse__icon">
+                    <img src="https://cdn-icons-png.flaticon.com/512/189/189214.png" class="warehouse__icon__image">
+                    <span class="warehouse__icon__text">Sfodia</span>
+                </div> -->
+                <!--For each warehouse in the database, an img appears here via JS code.-->
             </div>
         </div>
     </div>

@@ -102,6 +102,7 @@
 }
 h2{
     padding: 20px 20px;
+    color:white;
 }
  .warehouse__icons__container{
     justify-content: center;
@@ -117,6 +118,21 @@ h2{
     grid-template-columns: repeat(6, 1fr);
     grid-auto-rows: 150px;
     overflow:auto
+}
+.warehouse__icon{
+    height: 100%;
+    width: auto;
+    background-size: contain;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.warehouse__icon:hover{
+    transform: scale(1.2);
+}
+.warehouse__icon__text{
+    color:white;
 }
 img{
     height: 100%;
