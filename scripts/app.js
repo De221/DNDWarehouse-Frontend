@@ -47,4 +47,12 @@ function fetchWarehouses()
         })
     
 }
+function getUserInfo() {
+    let json = fetch('http://localhost:8080/currentUser/username')
+    .then(response => response.text())
+    .then(text => 
+        { 
+            console.log(text);
+        })
+}
     
