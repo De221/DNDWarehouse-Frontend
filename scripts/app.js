@@ -178,7 +178,7 @@ function isLoged() {
               if(localStorage.getItem('role').localeCompare('Admin') == 0)
                 {block2.setAttribute('onclick', 'transferAdmin();');};
               if(localStorage.getItem('role').localeCompare('User') == 0)
-                {block2.setAttribute('onclick', 'transferUdmin();');};
+                {block2.setAttribute('onclick', 'transferUser();');};
           })
   }   
 }
