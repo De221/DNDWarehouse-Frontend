@@ -5,10 +5,10 @@
     font-family:'Kumb Sans', sans-serif;
     scroll-behavior: smooth;
 }
-
+.alert { display: none; opacity: 100;}
 .navbar{
     background: rgb(106, 50, 159);
-    height: 80px;
+    height: 90px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -26,6 +26,7 @@
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 50px;
+    padding-top:10px; 
 }
 #navbar_logo{
     background-color: red;
@@ -50,6 +51,7 @@
 .navbar__item{
     height: 80px;
     list-style-type: none;
+    text-align: center;
 }
 .navbar__links{
     color: white;
@@ -81,7 +83,7 @@
 }
 #main-page-body{
     background-size: 100px;
-    height: 857px;
+    height: 847px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -97,7 +99,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 857px;
+    height: 847px;
     width: 1600px;
 }
 h2{
@@ -107,7 +109,7 @@ h2{
 .warehouse__icons__container{
     justify-content: center;
     align-items: center;
-    height: 857px;
+    height: 847px;
     width: 1520px;
     border-color: rgb(136, 102, 127);
     border-style:ridge;
@@ -121,7 +123,7 @@ h2{
 }
 .warehouse__information__container{
     align-items: left;
-    height: 857px;
+    height: 847px;
     width: 1520px;
     border-color: rgb(136, 102, 127);
     border-style:ridge;
@@ -186,17 +188,19 @@ img{
 .page__body{  
     background-size: 100px;
     background-color: rgb(125, 81, 148);
-    height: 857px;
+    height: 847px;
     display: flex;
-    justify-content: left;
     align-items: center;
     font-size: 1.2rem;
     z-index: 999;
 }
+#user-picture{
+    margin-right: 20px;
+}
 .side_navbar_container{
-    position: fixed;
+    position: sticky;
     left:0;
-    height: 857px;
+    height: 847px;
     width: 240px;
     background: rgb(106, 50, 159);
     padding: 6px 0px;
@@ -228,6 +232,7 @@ margin: 8px;
 }
 
 #side-menu-icon{
+    margin-right: 30px;
     position: absolute;
     left:88%;
     top:0px;
@@ -236,9 +241,10 @@ margin: 8px;
     transform: translateX(-50%);
 }
 .side_navbar{
+    float:left;
     background: rgb(106, 50, 159);
-    height: 857px;
-    width: 150px;
+    height: 847px;
+    width: 240px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -291,3 +297,44 @@ ul li ul {
   .side_submenu_item:hover{
       color:orange
   }
+  /*--------------------------------------------------^^^^Admin and User Home-Page^^^^------------------------------------------------------*/
+  .page__information
+  {
+    margin: 10px;
+    position: relative;
+    height: 827px;
+    width: 100%;
+    border-color: rgb(136, 102, 127);
+    border-style:ridge;
+    display:flex;
+    color: white;
+  }
+  .content-table {
+      border-collapse: collapse;
+      margin: 25px 0;
+      font-size: 0.9em;
+      min-width: 400px;
+      height: 200px;
+      border-radius: 5px 5px 0 0;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  }
+  .content-table thead {
+    background-color: #009879;
+    color: white;
+    text-align: left;
+    font-weight: bold;
+}
+.content-table th, .content-table td {
+    padding: 12px 15px;
+}
+.content-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+    color:white;
+}
+.content-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+.content-table tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
