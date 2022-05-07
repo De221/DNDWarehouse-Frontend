@@ -130,7 +130,7 @@ async function fetchWarehouses()
               block.textContent += text1;
               localStorage.setItem('role', text1.slice(0, -1));
 
-              fetch('http://localhost:8080/currentUser/getUsername',
+              fetch('http://localhost:8080/currentUser/getEmail',
               {
                 method: 'GET',
                 headers: myHeaders,
@@ -138,10 +138,21 @@ async function fetchWarehouses()
               .then(response2 => response2.text())
               .then(text2 => 
                   { 
-                      var block = document.getElementById("user-name");
-                      block.textContent += text2;
+                    localStorage.setItem('email', text2);
+                      fetch('http://localhost:8080/employee/findByEmail?email=' + text2,
+                      {
+                        method: 'GET',
+                        headers: myHeaders,
+                      })
+                      .then(response3 => response3.text())
+                      .then(text3 => 
+                          { 
+                            localStorage.setItem('fullName', text3);
+                               var block = document.getElementById("user-name");
+                               block.textContent += text3;
+                          })
+                          })
                   })
-          })
 }
 function isLoged() {
   if(localStorage.getItem('jwtToken').localeCompare('null') != 0)
