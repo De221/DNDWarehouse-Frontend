@@ -22,7 +22,7 @@ function login() {
           jwtToken = "Bearer " + str2;
 
           localStorage.setItem('jwtToken', jwtToken); // write
-          console.log(localStorage.getItem('jwtToken')); // read
+          //console.log(localStorage.getItem('jwtToken')); // read
           $('#loginModal').modal('hide');
 
 
@@ -59,15 +59,15 @@ function logout() {
   localStorage.setItem('jwtToken', 'null');
   window.location.href = 'https://de221.github.io/DNDWarehouse-Frontend/';
 }
-  add_action('template_redirect','my_non_logged_redirect');
-  function my_non_logged_redirect()
-  {
-       if ((in_category(1) && !is_user_logged_in() ))
-      {
-          wp_redirect( 'https://de221.github.io/DNDWarehouse-Frontend/' );
-          die();
-      }
-  }
+  // add_action('template_redirect','my_non_logged_redirect');
+  // function my_non_logged_redirect()
+  // {
+  //      if ((in_category(1) && !is_user_logged_in() ))
+  //     {
+  //         wp_redirect( 'https://de221.github.io/DNDWarehouse-Frontend/' );
+  //         die();
+  //     }
+  // }
 
 async function fetchWarehouses() 
 {
@@ -141,6 +141,22 @@ async function fetchWarehouses()
                       block.textContent += text2;
                   })
           })
+}
+function isLoged() {
+  if(localStorage.getItem('jwtToken').localeCompare('null') != 0)
+  {
+    var block = document.getElementById("user-picture");
+    block.style.display = "block";
+    var block1 = document.getElementById("signup");
+    block1.textContent = "Logout";
+    block1.removeAttribute("data-target");
+    block1.removeAttribute("data-toggle");
+    block1.setAttribute('onclick','logout();');
+    block1.onclick = function() {logout();};
+    var block2 = document.getElementById("index-user-name");
+    block2.style.display = "flex";
+    block2.setAttribute('href', 'https://de221.github.io/DNDWarehouse-Frontend/admin-home');
+  }   
 }
     // async function loadIntoTable() {
     //     const tableHead = table.querySelector("thead");
