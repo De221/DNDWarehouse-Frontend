@@ -173,7 +173,7 @@ function isLoged() {
             if(text.startsWith('[ROLE_USER]'))
             text1 = "User ";
               localStorage.setItem('role', text1.slice(0, -1));
-              console.log(localStorage.getItem('role'));
+              console.log("aaa " + localStorage.getItem('role'));
 
               if(localStorage.getItem('role').localeCompare('Admin') == 0)
                 {block2.setAttribute('onclick', 'transferAdmin();');};
