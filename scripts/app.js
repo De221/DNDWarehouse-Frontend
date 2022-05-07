@@ -55,6 +55,20 @@ $('#link-close').click(function(){$('#alert1').hide('fade');}); // close alert i
 jQuery( "li:has(ul)" ).hover(function(){ // When a li that has a ul is clicked ...
 	jQuery(this).toggleClass('active');}); // then toggle (add/remove) the class 'active' on it. 
 
+function logout() {
+  localStorage.removeItem(jwtToken);
+  window.location.href = 'https://de221.github.io/DNDWarehouse-Frontend/';
+}
+  add_action('template_redirect','my_non_logged_redirect');
+  function my_non_logged_redirect()
+  {
+       if ((in_category(1) && !is_user_logged_in() ))
+      {
+          wp_redirect( 'https://de221.github.io/DNDWarehouse-Frontend/' );
+          die();
+      }
+  }
+
 async function fetchWarehouses() 
 {
     var listCityNames = [];
