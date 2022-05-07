@@ -155,7 +155,11 @@ function isLoged() {
     block1.onclick = function() {logout();};
     var block2 = document.getElementById("index-user-name");
     block2.style.display = "flex";
-    block2.setAttribute('href', 'https://de221.github.io/DNDWarehouse-Frontend/admin-home');
+    block2.setAttribute('color', 'white');
+    if(block2.textContent.startsWith('Admin'))
+      {block2.setAttribute('href', 'https://de221.github.io/DNDWarehouse-Frontend/admin-home')};
+    if(block2.textContent.startsWith('User'))
+      {block2.setAttribute('href', 'https://de221.github.io/DNDWarehouse-Frontend/user-home')};
   }   
 }
     // async function loadIntoTable() {
