@@ -56,7 +56,7 @@ jQuery( "li:has(ul)" ).hover(function(){ // When a li that has a ul is clicked .
 	jQuery(this).toggleClass('active');}); // then toggle (add/remove) the class 'active' on it. 
 
 function logout() {
-  localStorage.removeItem(jwtToken);
+  localStorage.setItem('jwtToken', 'null');
   window.location.href = 'https://de221.github.io/DNDWarehouse-Frontend/';
 }
   add_action('template_redirect','my_non_logged_redirect');
