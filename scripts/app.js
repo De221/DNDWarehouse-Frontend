@@ -128,6 +128,7 @@ async function fetchWarehouses()
             text1 = "User ";
               var block = document.getElementById("user-name");
               block.textContent += text1;
+              localStorage.setItem('role', text1.slice(0, -1));
 
               fetch('http://localhost:8080/currentUser/getUsername',
               {
@@ -155,9 +156,10 @@ function isLoged() {
     block1.onclick = function() {logout();};
     var block2 = document.getElementById("index-user-name");
     block2.style.display = "flex";
-    if(block2.textContent.startsWith('Admin'))
+
+    if(localStorage.getItem('role').localeCompare('Admin') === 0)
       {block2.href= "https://de221.github.io/DNDWarehouse-Frontend/admin-home"};
-    if(block2.textContent.startsWith('User'))
+    if(localStorage.getItem('role').localeCompare('User') === 0)
       {block2.href= "https://de221.github.io/DNDWarehouse-Frontend/user-home"};
   }   
 }
