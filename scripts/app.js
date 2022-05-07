@@ -157,11 +157,36 @@ function isLoged() {
     var block2 = document.getElementById("index-user-name");
     block2.style.display = "flex";
 
-    if(localStorage.getItem('role').localeCompare('Admin') === 0)
-      {block2.href= "https://de221.github.io/DNDWarehouse-Frontend/admin-home"};
-    if(localStorage.getItem('role').localeCompare('User') === 0)
-      {block2.href= "https://de221.github.io/DNDWarehouse-Frontend/user-home"};
+    const myHeaders = new Headers();
+      myHeaders.append('Authorization', localStorage.getItem('jwtToken'))
+
+      fetch('http://localhost:8080/currentUser/getRole',
+      {
+        method: 'GET',
+        headers: myHeaders,
+      })
+      .then(response => response.text())
+      .then(text => 
+          { 
+            if(text.startsWith('[ROLE_ADMIN]'))
+            text1 = "Admin ";
+            if(text.startsWith('[ROLE_USER]'))
+            text1 = "User ";
+              localStorage.setItem('role', text1.slice(0, -1));
+              console.log(localStorage.getItem('role'));
+
+              if(localStorage.getItem('role').localeCompare('Admin') == 0)
+                {block2.setAttribute('onclick', 'transferAdmin();');};
+              if(localStorage.getItem('role').localeCompare('User') == 0)
+                {block2.setAttribute('onclick', 'transferUdmin();');};
+          })
   }   
+}
+function transferAdmin(){
+  window.location.href = 'https://de221.github.io/DNDWarehouse-Frontend/admin-home';
+}
+function transferUser(){
+  window.location.href = 'https://de221.github.io/DNDWarehouse-Frontend/user-home';
 }
     // async function loadIntoTable() {
     //     const tableHead = table.querySelector("thead");
