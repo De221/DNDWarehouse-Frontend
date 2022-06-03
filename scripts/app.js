@@ -197,89 +197,180 @@ function transferAdmin(){
 }
 function transferUser(){
   window.location.href = 'https://de221.github.io/DNDWarehouse-Frontend/user-home';
-}
-    // async function loadIntoTable() {
-    //     const tableHead = table.querySelector("thead");
-    //     const tableBody = table.querySelector("tbody");
-    //     const response = await fetch('http://localhost:8080/task/fetch');
-    //     const data = await response.json();
-    //     buildHtmlTable(data);
-    //     //clear the table
-    //     tableHead.innerHTML = "<tr></tr>";
-    //     tableBody.innerHTML = "";
-    //     //populate the headers
-    //     for(const headerText of headers) {
-    //         const headerElement = document.createElement("th");
-    //         headerElement.textContent = headerText;
-    //         tableHead.querySelector("tr").appendChild(headerElement);
-    //     }
-    //     for(const row of rows){
-    //         const rowElement = document.createElement("tr");
+}  
+    const toTimestamp = (strDate) => {  //timestamp to UNIX time
+      const dt = new Date(strDate).getTime();  
+      return dt;
+    }
+  async function LoadTable() 
+  {
+    function buildHtmlTable(arr)
+    {
+      var table = _table_.cloneNode(false),
+        thead = _thead_.cloneNode(false),
+        tbody = _tbody_.cloneNode(false),
+        columns = addAllColumnHeaders(arr, table);
+      for (var i = 0, maxi = arr.length; i < maxi; ++i) { //table rows and columns
+        var tr = _tr_.cloneNode(false);
+        for (var j = 0, maxj = columns.length; j < maxj; ++j) {
+          var td = _td_.cloneNode(false);
+          var cellValue = arr[i][columns[j]];
+          if(cellValue !==null &&(j===6 || j===7))
+          {             
+            var date = new Date(toTimestamp(cellValue));
+            cellValue = date.toDateString() + " " + date.toLocaleTimeString();
+          }
+          if (typeof(cellValue) == 'object' && cellValue != null && cellValue.length != 0)
+          {
+            td.className="list__in__table";
 
-    //         for(const cellText of row){
-    //             const cellElement = document.createElement("tr");
+            var div0 = _div_.cloneNode(false);
+            div0.className="dropdown";
+            var button = _button_.cloneNode(false);
+            if(j===5)//this means the packets column
+            {
+              button.innerHTML=arr[i][columns[1]] + " packets";
+              button.className="dropbtn";
+              var divMain = _div_.cloneNode(false);
+              divMain.className="dropdown-content";
+              cellValue.forEach(obj => 
+              {
+                var div = _div_.cloneNode(false);
+                div.className="side-dropdown-content";
+                var subdiv0 = _div_.cloneNode(false);
+                subdiv0.innerHTML="id: " + obj["id"];
+                div.appendChild(subdiv0);
+                var subdiv1 = _div_.cloneNode(false);
+                subdiv1.innerHTML="weight: " + obj["weight"];
+                div.appendChild(subdiv1);
+                var subdiv2 = _div_.cloneNode(false);
+                subdiv2.innerHTML="warehouse id: " + obj["warehouseId"];
+                div.appendChild(subdiv2);                
 
-    //             cellElement.textContent = cellText;
-    //             rowElement.appendChild(cellElement);
-    //         }
+                divMain.appendChild(div);
+                var divText = _div_.cloneNode(false);
+                divText.innerHTML=obj["name"];
+                divText.className="divText";
+                divMain.appendChild(divText);
+                var img = _img_.cloneNode(false);
+                img.setAttribute("src", "https://www.svgrepo.com/show/98299/right-arrow.svg");
+                img.className="side-arrow-svg";
+                let translateY = -25.92;
+                let string = "translate(-30px, ".concat(translateY,"px)");
+                img.style.transform = string;
+                divMain.appendChild(img);
+              });
+            }
+            if(j===4)//this means the employees column
+            {
+              button.innerHTML=arr[i][columns[1]] + " employees";
+              button.className="dropbtn";
+              var divMain = _div_.cloneNode(false);
+              divMain.className="dropdown-content";
+              cellValue.forEach(obj => {
+                var div = _div_.cloneNode(false);
+                div.innerHTML=obj["fullName"];
+                divMain.appendChild(div);
+              });
+            }        
+            div0.appendChild(button);
+            div0.appendChild(divMain);
+            td.appendChild(div0);
+          }
+          
+          else
+          td.appendChild(document.createTextNode(cellValue || ''));
 
-    //         tableBody.appendChild(rowElement);
-    //     }
+          tr.appendChild(td);
+        }
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        tbody.appendChild(tr);
+        table.className="content-table";
+      }
+      return table;
+    }
+    function addAllColumnHeaders(arr, table)  // Table headers
+    {
+      var columnSet = [],
+        tr = _tr_.cloneNode(false),
+        thead = _thead_.cloneNode(false);
+      for (var i = 0, l = arr.length; i < l; i++) {
+        for (var key in arr[i]) {
+          if (arr[i].hasOwnProperty(key) && columnSet.indexOf(key) === -1) {
+            columnSet.push(key);
+            var th = _th_.cloneNode(false);
+            if (key==='fullStatusName')
+            key="status";
+            if (key==='cityName')
+            key="city";
+            if (key==='expectedFinish')
+            key="finish";
+            th.appendChild(document.createTextNode(key));
+            tr.appendChild(th);
+          }
+        }
+      }
+      thead.appendChild(tr);
+      table.appendChild(thead);
+      return columnSet;
+    }
+      var _table_ = document.createElement('table');
+      _thead_ = document.createElement('thead'),
+      _tbody_ = document.createElement('tbody'),
+      _tr_ = document.createElement('tr'),
+      _th_ = document.createElement('th'),
+      _td_ = document.createElement('td');
+      _div_ = document.createElement('div');
+      _button_ = document.createElement('button');
+      _img_ = document.createElement('img');
+      const page__main__container = document.querySelector('#page__main__container');
 
-    //     console.log(data);
-    // }
-    
-    async function LoadTable() {
       const myHeaders = new Headers();
       myHeaders.append('Authorization', localStorage.getItem('jwtToken'));
       let json = await fetch('http://localhost:8080/task/fetch',
       {
         method: 'GET',
         headers: myHeaders,
+      })
+      .then(response => response.json())
+      .then((response) => 
+      {
+        //console.log(response);
+        page__main__container.appendChild(buildHtmlTable(response));
+      })
+      .then(response => // Adds event listeners to each button in order to open the submenus.
+      {
+        const dropbtns = document.querySelectorAll('.dropbtn');
+        dropbtns.forEach(dropbtn => dropbtn.addEventListener('click', function ( event ) 
+        {
+          let dropdowns0 = dropbtn.parentElement.childNodes;
+          let dropdowns1 = dropdowns0[1];
+          dropdowns1.classList.toggle("show");
+        }
+        ));
+
+        const sideArrows = document.querySelectorAll('.side-arrow-svg');
+        sideArrows.forEach(sideArrow => sideArrow.addEventListener('mouseover', function ( event ) 
+        {
+          let dropdowns0 = dropbtn.parentElement.childNodes;
+          let dropdowns1 = dropdowns0[1];
+          dropdowns1.classList.toggle("show");
+        }
+        ));
       });
-      //let json = [{"id":3,"name":"Task3","start":null,"employees":[],"packets":[],"fullStatusName":"New Task","expectedFinish":null,"cityName":null},{"id":4,"name":"Task4","start":null,"employees":[],"packets":[],"fullStatusName":"New Task","expectedFinish":null,"cityName":null},{"id":5,"name":"Task5","start":null,"employees":[],"packets":[],"fullStatusName":"New Task","expectedFinish":null,"cityName":null},{"id":1,"name":"Task1","start":"2022-01-10T23:20:58.986+00:00","employees":[],"packets":[{"id":10,"name":"packetX","weight":0.269,"warehouseId":1}],"fullStatusName":"Finished","expectedFinish":"2022-01-10T23:26:58.986+00:00","cityName":"Sofia"},{"id":2,"name":"Task2","start":"2022-01-10T23:25:58.897+00:00","employees":[],"packets":[{"id":4,"name":"Kutiq pulna s taini","weight":69.0,"warehouseId":2}],"fullStatusName":"Finished","expectedFinish":"2022-01-11T05:50:44.398+00:00","cityName":"Plovdiv"}]
-      document.body.appendChild(buildHtmlTable(json));
-    }
-    
-    var _table_ = document.createElement('table');
-    _tr_ = document.createElement('tr'),
-    _th_ = document.createElement('th'),
-    _td_ = document.createElement('td');
-    
-    
-    // Builds the HTML Table out of myList json data from Ivy restful service.
-    function buildHtmlTable(arr) {
-      var table = _table_.cloneNode(false),
-        columns = addAllColumnHeaders(arr, table);
-      for (var i = 0, maxi = arr.length; i < maxi; ++i) {
-        var tr = _tr_.cloneNode(false);
-        for (var j = 0, maxj = columns.length; j < maxj; ++j) {
-          var td = _td_.cloneNode(false);
-          var cellValue = arr[i][columns[j]];
-          td.appendChild(document.createTextNode(arr[i][columns[j]] || ''));
-          tr.appendChild(td);
-        }
-        table.appendChild(tr);
+  }
+// Close the dropdown menu if the user clicks outside of it.
+window.onclick = function(event)
+{
+  if (!event.target.matches('.dropbtn')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
       }
-      return table;
     }
-    
-    // Adds a header row to the table and returns the set of columns.
-    // Need to do union of keys from all records as some records may not contain
-    // all records
-    function addAllColumnHeaders(arr, table) {
-      var columnSet = [],
-        tr = _tr_.cloneNode(false);
-      for (var i = 0, l = arr.length; i < l; i++) {
-        for (var key in arr[i]) {
-          if (arr[i].hasOwnProperty(key) && columnSet.indexOf(key) === -1) {
-            columnSet.push(key);
-            var th = _th_.cloneNode(false);
-            th.appendChild(document.createTextNode(key));
-            tr.appendChild(th);
-          }
-        }
-      }
-      table.appendChild(tr);
-      return columnSet;
-    }
+  }
+}
