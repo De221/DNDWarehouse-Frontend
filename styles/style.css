@@ -379,7 +379,7 @@ ul li ul {
   }
   .side-dropdown-content
   {
-    transform: translate(160px, -25.92px);
+    transform: translate(160px, 0px);
     text-align: left;
     position: absolute;
     background-color: #009879;

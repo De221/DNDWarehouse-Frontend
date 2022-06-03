@@ -353,9 +353,21 @@ function transferUser(){
         const sideArrows = document.querySelectorAll('.side-arrow-svg');
         sideArrows.forEach(sideArrow => sideArrow.addEventListener('mouseover', function ( event ) 
         {
-          let dropdowns0 = dropbtn.parentElement.childNodes;
-          let dropdowns1 = dropdowns0[1];
-          dropdowns1.classList.toggle("show");
+          var subdropdowns = document.getElementsByClassName("side-dropdown-content"); //close already opened side-dropdowns
+          var i;
+          for (i = 0; i < subdropdowns.length; i++) 
+          {
+            var openSubDropdown = subdropdowns[i];
+            if (openSubDropdown.classList.contains('show')) {
+              openSubDropdown.classList.remove('show');
+            }
+          }
+
+          let subdropdowns0 = sideArrow.parentElement.childNodes;
+          var parent = sideArrow.parentNode;
+          var indexOfArrow = Array.prototype.indexOf.call(parent.children, sideArrow);
+          let subdropdowns1 = subdropdowns0[indexOfArrow-2];
+          subdropdowns1.classList.toggle("show");
         }
         ));
       });
@@ -374,3 +386,16 @@ window.onclick = function(event)
     }
   }
 }
+window.addEventListener('mouseover', function ( event ) 
+{
+  if (!event.target.matches('.side-arrow-svg')) {
+    var subdropdowns = document.getElementsByClassName("side-dropdown-content");
+    var i;
+    for (i = 0; i < subdropdowns.length; i++) {
+      var openSubDropdown = subdropdowns[i];
+      if (openSubDropdown.classList.contains('show')) {
+        openSubDropdown.classList.remove('show');
+      }
+    }
+  }
+});
