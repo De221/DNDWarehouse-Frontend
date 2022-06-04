@@ -254,8 +254,8 @@ function transferUser(){
                 divMain.appendChild(divText);
                 var img = _img_.cloneNode(false);
                 img.setAttribute("src", "https://www.svgrepo.com/show/98299/right-arrow.svg");
-                img.className="side-arrow-svg";
-                let translateY = -25.92;
+                img.className="side-arrow-svg";      
+                let translateY = -25.92; // hard-coded ......
                 let string = "translate(-30px, ".concat(translateY,"px)");
                 img.style.transform = string;
                 divMain.appendChild(img);
@@ -269,8 +269,26 @@ function transferUser(){
               divMain.className="dropdown-content";
               cellValue.forEach(obj => {
                 var div = _div_.cloneNode(false);
-                div.innerHTML=obj["fullName"];
+                div.className="side-dropdown-content";
+                var subdiv0 = _div_.cloneNode(false);
+                subdiv0.innerHTML="id: " + obj["id"];
+                div.appendChild(subdiv0);
+                var subdiv1 = _div_.cloneNode(false);
+                subdiv1.innerHTML="email: " + obj["email"];
+                div.appendChild(subdiv1);                          
+
                 divMain.appendChild(div);
+                var divText = _div_.cloneNode(false);
+                divText.innerHTML=obj["fullName"];
+                divText.className="divText";
+                divMain.appendChild(divText);
+                var img = _img_.cloneNode(false);
+                img.setAttribute("src", "https://www.svgrepo.com/show/98299/right-arrow.svg");
+                img.className="side-arrow-svg";      
+                let translateY = -25.92; // hard-coded ......
+                let string = "translate(-30px, ".concat(translateY,"px)");
+                img.style.transform = string;
+                divMain.appendChild(img);
               });
             }        
             div0.appendChild(button);
@@ -373,9 +391,10 @@ function transferUser(){
       });
   }
 // Close the dropdown menu if the user clicks outside of it.
-window.onclick = function(event)
+window.addEventListener('mouseover', function ( event ) 
 {
-  if (!event.target.matches('.dropbtn')) {
+  if (!(event.target.matches('.dropbtn') || event.target.matches('.dropdown-content') 
+  || event.target.matches('.divText') || event.target.matches('.side-arrow-svg'))) {
     var dropdowns = document.getElementsByClassName("dropdown-content");
     var i;
     for (i = 0; i < dropdowns.length; i++) {
@@ -385,7 +404,7 @@ window.onclick = function(event)
       }
     }
   }
-}
+});
 window.addEventListener('mouseover', function ( event ) 
 {
   if (!event.target.matches('.side-arrow-svg')) {
