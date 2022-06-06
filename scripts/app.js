@@ -305,6 +305,7 @@ function transferUser(){
         table.appendChild(tbody);
         tbody.appendChild(tr);
         table.className="content-table";
+        table.id="my-content-table";
       }
       return table;
     }
@@ -418,3 +419,106 @@ window.addEventListener('mouseover', function ( event )
     }
   }
 });
+// ------------------------------------------------End of Admin-browseTasks------------------------------------------------------
+function createTaskModal(){
+$('.alert').hide();
+let label1 = document.getElementById("labelField1");
+label1.innerHTML="Task name";
+button1.innerHTML="Create task";
+let title1 = document.getElementById("modal-title1");
+title1.style.textDecoration = "underline";
+let title2 = document.getElementById("modal-title2");
+title2.style.textDecoration = "none";
+
+button1.setAttribute("onclick", "createNewTask()");
+}
+function removeTaskModal(){
+  $('.alert').hide();
+  let label1 = document.getElementById("labelField1");
+  label1.innerHTML="Task id";
+  button1.innerHTML="Remove task";
+  let title1 = document.getElementById("modal-title1");
+  title1.style.textDecoration = "none";
+  let title2 = document.getElementById("modal-title2");
+  title2.style.textDecoration = "underline";
+
+  button1.setAttribute("onclick", "removeTask()");
+}
+
+function createNewTask()
+{
+  let input = document.getElementsByName("input-field1")[0].value;
+
+  var params = 'name=' + input;
+  var request = new XMLHttpRequest();
+  request.open("POST", "http://localhost:8080/task/create?" + params, true);
+  request.setRequestHeader('Authorization', localStorage.getItem('jwtToken'));
+  request.setRequestHeader("Accept", "application/json");
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.onload = () => 
+  {
+    if(request.responseText === "A task with this name already exists.")
+    {
+      if(!document.querySelector('#alert1').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert1').classList.toggle("alert-danger");
+        document.querySelector('#alert1').classList.remove("alert-success");
+      }
+      $('#alert1-text').html("A task with this name already exists.");
+      $('.alert').show('fade');
+    }
+    if(request.responseText.startsWith("Task number"))
+    {
+      $('#my-content-table').remove();
+      LoadTable();
+      if(!document.querySelector('#alert1').classList.contains("alert-success"))
+      {
+        document.querySelector('#alert1').classList.toggle("alert-success");
+        document.querySelector('#alert1').classList.remove("alert-danger");
+      }
+      $('#alert1-text').html("Task " + input + " has been successfully created.");
+      $('.alert').show('fade');
+    }
+  }
+  request.send();
+}
+
+function removeTask()
+{
+  let input = document.getElementsByName("input-field1")[0].value;
+
+  var params = 'taskId=' + input;
+  var request = new XMLHttpRequest();
+  request.open("DELETE", "http://localhost:8080/task/remove?" + params, true);
+  request.setRequestHeader('Authorization', localStorage.getItem('jwtToken'));
+  request.setRequestHeader("Accept", "application/json");
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.setRequestHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
+  //request.setRequestHeader('Access-Control-Allow-Credentials', 'true');
+  request.onload = () => 
+  {
+    if(request.responseText === "There is no such task.")
+    {
+      if(!document.querySelector('#alert1').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert1').classList.toggle("alert-danger");
+        document.querySelector('#alert1').classList.remove("alert-success");
+      }
+      $('#alert1-text').html("There is no such task.");
+      $('.alert').show('fade');
+    }
+    if(request.responseText.startsWith("Task number"))
+    {
+      $('#my-content-table').remove();
+      LoadTable();
+      if(!document.querySelector('#alert1').classList.contains("alert-success"))
+      {
+        document.querySelector('#alert1').classList.toggle("alert-success");
+        document.querySelector('#alert1').classList.remove("alert-danger");
+      }
+      $('#alert1-text').html("Task with id: " + input + " has been successfully removed.");
+      $('.alert').show('fade');
+    }
+  }
+  request.send();
+}

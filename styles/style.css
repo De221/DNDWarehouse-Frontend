@@ -307,7 +307,6 @@ ul li ul {
     border-color: rgb(136, 102, 127);
     border-style:ridge;
     display:flex;
-    color: white;
     justify-content: center;
     overflow-y: scroll;
   }
@@ -408,3 +407,14 @@ ul li ul {
   /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
   .show {display:block;}
 /*---------------------------------------Dropdown menu in table finish---------------------------------------------------*/
+.dual-modal-title{
+    margin-bottom: 0;
+    line-height: 1.5;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+.dual-modal-title:hover{
+    transform: scale(1.1);
+    transition: all .3s;
+    text-decoration: underline;
+}
