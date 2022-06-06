@@ -1,7 +1,7 @@
 function login() {
   let Role = "";
-  var email = document.getElementsByName("email")[0].value;
-  var password = document.getElementsByName("password")[0].value;
+  let email = document.getElementsByName("email")[0].value;
+  let password = document.getElementsByName("password")[0].value;
   
   const myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
@@ -71,18 +71,18 @@ function logout() {
 
 async function fetchWarehouses() 
 {
-    var listCityNames = [];
-    var listWarehouseStorages = [];
+    let listCityNames = [];
+    let listWarehouseStorages = [];
     function putWarehouses(length, spantext, circleText) {
         for (let i = 0; i < length; i++) {
-            var div = document.createElement("div");
+            let div = document.createElement("div");
             div.className="warehouse__icon";
-            var img = document.createElement("img");
+            let img = document.createElement("img");
             img.setAttribute("src", "https://cdn-icons-png.flaticon.com/512/189/189214.png");
-            var infoCircle = document.createElement("div");
+            let infoCircle = document.createElement("div");
             infoCircle.className="quick__info__circle";
             infoCircle.innerHTML="Storage:" + circleText[i];
-            var span = document.createElement("span");
+            let span = document.createElement("span");
             span.className="warehouse__icon__text";
             span.textContent=spantext[i];
 
@@ -90,7 +90,7 @@ async function fetchWarehouses()
             div.appendChild(infoCircle);
             div.appendChild(span);
 
-            var block = document.getElementById("index-page");
+            let block = document.getElementById("index-page");
             block.appendChild(div);
         };
     }
@@ -101,7 +101,7 @@ async function fetchWarehouses()
         { 
             //console.log(json); 
             //console.log(json.length);
-            for (var warehouse of json) {
+            for (let warehouse of json) {
                 //console.log(warehouse);--> full info
                 listCityNames.push(warehouse['cityName']);
                 listWarehouseStorages.push(warehouse['storage_space']);
@@ -111,86 +111,94 @@ async function fetchWarehouses()
         })   
 }
     function getUserInfo() {
-      const myHeaders = new Headers();
-      myHeaders.append('Authorization', localStorage.getItem('jwtToken'))
-
-      fetch('http://localhost:8080/currentUser/getRole',
+      if(localStorage.getItem('jwtToken') != 'null' && localStorage.getItem('jwtToken') != null)
       {
-        method: 'GET',
-        headers: myHeaders,
-      })
-      .then(response => response.text())
-      .then(text => 
-          { 
-            if(text.startsWith('[ROLE_ADMIN]'))
-            text1 = "Admin ";
-            if(text.startsWith('[ROLE_USER]'))
-            text1 = "User ";
-              var block = document.getElementById("user-name");
-              block.textContent += text1;
-              localStorage.setItem('role', text1.slice(0, -1));
-
-              fetch('http://localhost:8080/currentUser/getEmail',
-              {
-                method: 'GET',
-                headers: myHeaders,
-              })
-              .then(response2 => response2.text())
-              .then(text2 => 
-                  { 
-                    localStorage.setItem('email', text2);
-                      fetch('http://localhost:8080/employee/findByEmail?email=' + text2,
-                      {
-                        method: 'GET',
-                        headers: myHeaders,
-                      })
-                      .then(response3 => response3.text())
-                      .then(text3 => 
-                          { 
-                            localStorage.setItem('fullName', text3);
-                               var block = document.getElementById("user-name");
-                               block.textContent += text3;
-                          })
-                          })
-                  })
+        const myHeaders = new Headers();
+        myHeaders.append('Authorization', localStorage.getItem('jwtToken'))
+  
+        fetch('http://localhost:8080/currentUser/getRole',
+        {
+          method: 'GET',
+          headers: myHeaders,
+        })
+        .then(response => response.text())
+        .then(text => 
+            { 
+              if(text.startsWith('[ROLE_ADMIN]'))
+              text1 = "Admin ";
+              if(text.startsWith('[ROLE_USER]'))
+              text1 = "User ";
+                let block = document.getElementById("user-name");
+                block.textContent += text1;
+                localStorage.setItem('role', text1.slice(0, -1));
+  
+                fetch('http://localhost:8080/currentUser/getEmail',
+                {
+                  method: 'GET',
+                  headers: myHeaders,
+                })
+                .then(response2 => response2.text())
+                .then(text2 => 
+                    { 
+                      localStorage.setItem('email', text2);
+                        fetch('http://localhost:8080/employee/findByEmail?email=' + text2,
+                        {
+                          method: 'GET',
+                          headers: myHeaders,
+                        })
+                        .then(response3 => response3.text())
+                        .then(text3 => 
+                            { 
+                              localStorage.setItem('fullName', text3);
+                                 let block = document.getElementById("user-name");
+                                 block.textContent += text3;
+                            })
+                            })
+                    })
+      }
+      
 }
 function isLoged() {
-  if(localStorage.getItem('jwtToken').localeCompare('null') != 0)
+  if(localStorage.getItem('jwtToken') != null)
   {
-    var block = document.getElementById("user-picture");
-    block.style.display = "block";
-    var block1 = document.getElementById("signup");
-    block1.textContent = "Logout";
-    block1.removeAttribute("data-target");
-    block1.removeAttribute("data-toggle");
-    block1.setAttribute('onclick','logout();');
-    block1.onclick = function() {logout();};
-    var block2 = document.getElementById("index-user-name");
-    block2.style.display = "flex";
-
-    const myHeaders = new Headers();
-      myHeaders.append('Authorization', localStorage.getItem('jwtToken'))
-
-      fetch('http://localhost:8080/currentUser/getRole',
-      {
-        method: 'GET',
-        headers: myHeaders,
-      })
-      .then(response => response.text())
-      .then(text => 
-          { 
-            if(text.startsWith('[ROLE_ADMIN]'))
-            text1 = "Admin ";
-            if(text.startsWith('[ROLE_USER]'))
-            text1 = "User ";
-              localStorage.setItem('role', text1.slice(0, -1));
-
-              if(localStorage.getItem('role').localeCompare('Admin') == 0)
-                {block2.setAttribute('onclick', 'transferAdmin();');};
-              if(localStorage.getItem('role').localeCompare('User') == 0)
-                {block2.setAttribute('onclick', 'transferUser();');};
-          })
-  }   
+    if(localStorage.getItem('jwtToken').localeCompare('null') != 0)
+    {
+      let block = document.getElementById("user-picture");
+      block.style.display = "block";
+      let block1 = document.getElementById("signup");
+      block1.textContent = "Logout";
+      block1.removeAttribute("data-target");
+      block1.removeAttribute("data-toggle");
+      block1.setAttribute('onclick','logout();');
+      block1.onclick = function() {logout();};
+      let block2 = document.getElementById("index-user-name");
+      block2.style.display = "flex";
+  
+      const myHeaders = new Headers();
+        myHeaders.append('Authorization', localStorage.getItem('jwtToken'))
+  
+        fetch('http://localhost:8080/currentUser/getRole',
+        {
+          method: 'GET',
+          headers: myHeaders,
+        })
+        .then(response => response.text())
+        .then(text => 
+            { 
+              if(text.startsWith('[ROLE_ADMIN]'))
+              text1 = "Admin ";
+              if(text.startsWith('[ROLE_USER]'))
+              text1 = "User ";
+                localStorage.setItem('role', text1.slice(0, -1));
+  
+                if(localStorage.getItem('role').localeCompare('Admin') == 0)
+                  {block2.setAttribute('onclick', 'transferAdmin();');};
+                if(localStorage.getItem('role').localeCompare('User') == 0)
+                  {block2.setAttribute('onclick', 'transferUser();');};
+            })
+    }   
+  }
+  
 }
 function transferAdmin(){
   window.location.href = 'https://de221.github.io/DNDWarehouse-Frontend/admin-home';
@@ -202,22 +210,22 @@ function transferUser(){
       const dt = new Date(strDate).getTime();  
       return dt;
     }
-  async function LoadTable() 
+  async function LoadTaskTable() 
   {
     function buildHtmlTable(arr)
     {
-      var table = _table_.cloneNode(false),
+      let table = _table_.cloneNode(false),
         thead = _thead_.cloneNode(false),
         tbody = _tbody_.cloneNode(false),
         columns = addAllColumnHeaders(arr, table);
-      for (var i = 0, maxi = arr.length; i < maxi; ++i) { //table rows and columns
-        var tr = _tr_.cloneNode(false);
-        for (var j = 0, maxj = columns.length; j < maxj; ++j) {
-          var td = _td_.cloneNode(false);
-          var cellValue = arr[i][columns[j]];
+      for (let i = 0, maxi = arr.length; i < maxi; ++i) { //table rows and columns
+        let tr = _tr_.cloneNode(false);
+        for (let j = 0, maxj = columns.length; j < maxj; ++j) {
+          let td = _td_.cloneNode(false);
+          let cellValue = arr[i][columns[j]];
           if(cellValue !==null &&(j===6 || j===7))
           {             
-            var date = new Date(toTimestamp(cellValue));
+            let date = new Date(toTimestamp(cellValue));
             cellValue = date.toDateString() + " " + date.toLocaleTimeString();
           }
           if (typeof(cellValue) == 'object' && cellValue != null && cellValue.length != 0)
@@ -235,24 +243,24 @@ function transferUser(){
               divMain.className="dropdown-content";
               cellValue.forEach(obj => 
               {
-                var div = _div_.cloneNode(false);
+                let div = _div_.cloneNode(false);
                 div.className="side-dropdown-content";
-                var subdiv0 = _div_.cloneNode(false);
+                let subdiv0 = _div_.cloneNode(false);
                 subdiv0.innerHTML="id: " + obj["id"];
                 div.appendChild(subdiv0);
-                var subdiv1 = _div_.cloneNode(false);
+                let subdiv1 = _div_.cloneNode(false);
                 subdiv1.innerHTML="weight: " + obj["weight"];
                 div.appendChild(subdiv1);
-                var subdiv2 = _div_.cloneNode(false);
+                let subdiv2 = _div_.cloneNode(false);
                 subdiv2.innerHTML="warehouse id: " + obj["warehouseId"];
                 div.appendChild(subdiv2);                
 
                 divMain.appendChild(div);
-                var divText = _div_.cloneNode(false);
+                let divText = _div_.cloneNode(false);
                 divText.innerHTML=obj["name"];
                 divText.className="divText";
                 divMain.appendChild(divText);
-                var img = _img_.cloneNode(false);
+                let img = _img_.cloneNode(false);
                 img.setAttribute("src", "https://www.svgrepo.com/show/98299/right-arrow.svg");
                 img.className="side-arrow-svg";      
                 let translateY = -25.92; // hard-coded ......
@@ -265,24 +273,24 @@ function transferUser(){
             {
               button.innerHTML=arr[i][columns[1]] + " employees";
               button.className="dropbtn";
-              var divMain = _div_.cloneNode(false);
+              let divMain = _div_.cloneNode(false);
               divMain.className="dropdown-content";
               cellValue.forEach(obj => {
-                var div = _div_.cloneNode(false);
+                let div = _div_.cloneNode(false);
                 div.className="side-dropdown-content";
-                var subdiv0 = _div_.cloneNode(false);
+                let subdiv0 = _div_.cloneNode(false);
                 subdiv0.innerHTML="id: " + obj["id"];
                 div.appendChild(subdiv0);
-                var subdiv1 = _div_.cloneNode(false);
+                let subdiv1 = _div_.cloneNode(false);
                 subdiv1.innerHTML="email: " + obj["email"];
                 div.appendChild(subdiv1);                          
 
                 divMain.appendChild(div);
-                var divText = _div_.cloneNode(false);
+                let divText = _div_.cloneNode(false);
                 divText.innerHTML=obj["fullName"];
                 divText.className="divText";
                 divMain.appendChild(divText);
-                var img = _img_.cloneNode(false);
+                let img = _img_.cloneNode(false);
                 img.setAttribute("src", "https://www.svgrepo.com/show/98299/right-arrow.svg");
                 img.className="side-arrow-svg";      
                 let translateY = -25.92; // hard-coded ......
@@ -311,14 +319,14 @@ function transferUser(){
     }
     function addAllColumnHeaders(arr, table)  // Table headers
     {
-      var columnSet = [],
+      let columnSet = [],
         tr = _tr_.cloneNode(false),
         thead = _thead_.cloneNode(false);
-      for (var i = 0, l = arr.length; i < l; i++) {
-        for (var key in arr[i]) {
+      for (let i = 0, l = arr.length; i < l; i++) {
+        for (let key in arr[i]) {
           if (arr[i].hasOwnProperty(key) && columnSet.indexOf(key) === -1) {
             columnSet.push(key);
-            var th = _th_.cloneNode(false);
+            let th = _th_.cloneNode(false);
             if (key==='fullStatusName')
             key="status";
             if (key==='cityName')
@@ -334,7 +342,7 @@ function transferUser(){
       table.appendChild(thead);
       return columnSet;
     }
-      var _table_ = document.createElement('table');
+      let _table_ = document.createElement('table');
       _thead_ = document.createElement('thead'),
       _tbody_ = document.createElement('tbody'),
       _tr_ = document.createElement('tr'),
@@ -372,19 +380,19 @@ function transferUser(){
         const sideArrows = document.querySelectorAll('.side-arrow-svg');
         sideArrows.forEach(sideArrow => sideArrow.addEventListener('mouseover', function ( event ) 
         {
-          var subdropdowns = document.getElementsByClassName("side-dropdown-content"); //close already opened side-dropdowns
-          var i;
+          let subdropdowns = document.getElementsByClassName("side-dropdown-content"); //close already opened side-dropdowns
+          let i;
           for (i = 0; i < subdropdowns.length; i++) 
           {
-            var openSubDropdown = subdropdowns[i];
+            let openSubDropdown = subdropdowns[i];
             if (openSubDropdown.classList.contains('show')) {
               openSubDropdown.classList.remove('show');
             }
           }
 
           let subdropdowns0 = sideArrow.parentElement.childNodes;
-          var parent = sideArrow.parentNode;
-          var indexOfArrow = Array.prototype.indexOf.call(parent.children, sideArrow);
+          let parent = sideArrow.parentNode;
+          let indexOfArrow = Array.prototype.indexOf.call(parent.children, sideArrow);
           let subdropdowns1 = subdropdowns0[indexOfArrow-2];
           subdropdowns1.classList.toggle("show");
         }
@@ -396,10 +404,10 @@ window.addEventListener('mouseover', function ( event )
 {
   if (!(event.target.matches('.dropbtn') || event.target.matches('.dropdown-content') 
   || event.target.matches('.divText') || event.target.matches('.side-arrow-svg'))) {
-    var dropdowns = document.getElementsByClassName("dropdown-content");
-    var i;
+    let dropdowns = document.getElementsByClassName("dropdown-content");
+    let i;
     for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
+      let openDropdown = dropdowns[i];
       if (openDropdown.classList.contains('show')) {
         openDropdown.classList.remove('show');
       }
@@ -409,10 +417,10 @@ window.addEventListener('mouseover', function ( event )
 window.addEventListener('mouseover', function ( event ) 
 {
   if (!event.target.matches('.side-arrow-svg')) {
-    var subdropdowns = document.getElementsByClassName("side-dropdown-content");
-    var i;
+    let subdropdowns = document.getElementsByClassName("side-dropdown-content");
+    let i;
     for (i = 0; i < subdropdowns.length; i++) {
-      var openSubDropdown = subdropdowns[i];
+      let openSubDropdown = subdropdowns[i];
       if (openSubDropdown.classList.contains('show')) {
         openSubDropdown.classList.remove('show');
       }
@@ -421,6 +429,35 @@ window.addEventListener('mouseover', function ( event )
 });
 // ------------------------------------------------End of Admin-browseTasks------------------------------------------------------
 // ------------------------------------------------Start of Admin-browseTasks Functions------------------------------------------------------
+
+function reLoadTaskTable()
+{
+  $('#my-content-table').remove();
+  LoadTaskTable();
+}
+
+window.addEventListener("load", () => {
+  let element = document.querySelector("#task_table_icon");
+  if(typeof(element) != 'undefined' && element != null)
+  {
+    document.querySelector("#task_table_icon").addEventListener("click", e => {
+      reLoadTaskTable();
+  });
+  } 
+});
+
+window.addEventListener("load", () => {
+  let element = document.querySelector("#task_table_a");
+  if(typeof(element) != 'undefined' && element != null)
+  {
+    document.querySelector("#task_table_a").addEventListener("click", e => {
+      reLoadTaskTable();
+  });
+  } 
+});
+
+
+
 function createTaskModal(){
 $('.alert').hide();
 let label1 = document.getElementById("labelField1");
@@ -470,8 +507,7 @@ function createNewTask()
     }
     else if(request.responseText.startsWith("Task number"))
     {
-      $('#my-content-table').remove();
-      LoadTable();
+      reLoadTaskTable()
       if(!document.querySelector('#alert1').classList.contains("alert-success"))
       {
         document.querySelector('#alert1').classList.toggle("alert-success");
@@ -528,8 +564,7 @@ function removeTask()
     }
     else if(request.responseText.startsWith("Task number"))
     {
-      $('#my-content-table').remove();
-      LoadTable();
+      reLoadTaskTable()
       if(!document.querySelector('#alert1').classList.contains("alert-success"))
       {
         document.querySelector('#alert1').classList.toggle("alert-success");
@@ -583,8 +618,7 @@ function hireEmployee()
   {
     if(request.responseText.includes("has been hired"))
     {
-      $('#my-content-table').remove();
-      LoadTable();
+      reLoadTaskTable()
 
       if(!document.querySelector('#alert2').classList.contains("alert-success"))
       {
@@ -632,8 +666,7 @@ function fireEmployee()
   {
     if(request.responseText.includes("has been fired"))
     {
-      $('#my-content-table').remove();
-      LoadTable();
+      reLoadTaskTable()
       if(!document.querySelector('#alert2').classList.contains("alert-success"))
       {
         document.querySelector('#alert2').classList.toggle("alert-success");
@@ -706,8 +739,7 @@ function addPacket()
   {
     if(request.responseText.includes("has been included"))
     {
-      $('#my-content-table').remove();
-      LoadTable();
+      reLoadTaskTable()
 
       if(!document.querySelector('#alert3').classList.contains("alert-success"))
       {
@@ -755,8 +787,7 @@ function removePacket()
   {
     if(request.responseText.includes("has been excluded"))
     {
-      $('#my-content-table').remove();
-      LoadTable();
+      reLoadTaskTable()
 
       if(!document.querySelector('#alert3').classList.contains("alert-success"))
       {
