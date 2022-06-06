@@ -412,6 +412,8 @@ ul li ul {
     line-height: 1.5;
     padding-left: 40px;
     padding-right: 40px;
+    text-align: center;
+
 }
 .dual-modal-title:hover{
     transform: scale(1.1);

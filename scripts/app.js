@@ -420,6 +420,7 @@ window.addEventListener('mouseover', function ( event )
   }
 });
 // ------------------------------------------------End of Admin-browseTasks------------------------------------------------------
+// ------------------------------------------------Start of Admin-browseTasks Functions------------------------------------------------------
 function createTaskModal(){
 $('.alert').hide();
 let label1 = document.getElementById("labelField1");
@@ -449,8 +450,8 @@ function createNewTask()
 {
   let input = document.getElementsByName("input-field1")[0].value;
 
-  var params = 'name=' + input;
-  var request = new XMLHttpRequest();
+  let params = 'name=' + input;
+  let request = new XMLHttpRequest();
   request.open("POST", "http://localhost:8080/task/create?" + params, true);
   request.setRequestHeader('Authorization', localStorage.getItem('jwtToken'));
   request.setRequestHeader("Accept", "application/json");
@@ -467,7 +468,7 @@ function createNewTask()
       $('#alert1-text').html("A task with this name already exists.");
       $('.alert').show('fade');
     }
-    if(request.responseText.startsWith("Task number"))
+    else if(request.responseText.startsWith("Task number"))
     {
       $('#my-content-table').remove();
       LoadTable();
@@ -479,6 +480,16 @@ function createNewTask()
       $('#alert1-text').html("Task " + input + " has been successfully created.");
       $('.alert').show('fade');
     }
+    else
+    {
+      if(!document.querySelector('#alert1').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert1').classList.toggle("alert-danger");
+        document.querySelector('#alert1').classList.remove("alert-success");
+      }
+      $('#alert1-text').html("Please enter valid input values.");
+      $('.alert').show('fade');
+    }
   }
   request.send();
 }
@@ -487,14 +498,12 @@ function removeTask()
 {
   let input = document.getElementsByName("input-field1")[0].value;
 
-  var params = 'taskId=' + input;
-  var request = new XMLHttpRequest();
+  let params = 'taskId=' + input;
+  let request = new XMLHttpRequest();
   request.open("DELETE", "http://localhost:8080/task/remove?" + params, true);
   request.setRequestHeader('Authorization', localStorage.getItem('jwtToken'));
   request.setRequestHeader("Accept", "application/json");
   request.setRequestHeader('Content-Type', 'application/json');
-  request.setRequestHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
-  //request.setRequestHeader('Access-Control-Allow-Credentials', 'true');
   request.onload = () => 
   {
     if(request.status == '400') //Bad request
@@ -504,10 +513,10 @@ function removeTask()
         document.querySelector('#alert1').classList.toggle("alert-danger");
         document.querySelector('#alert1').classList.remove("alert-success");
       }
-      $('#alert1-text').html("Please enter valid input values only.");
+      $('#alert1-text').html("Please enter valid input values.");
       $('.alert').show('fade');
     }
-    if(request.responseText === "There is no such task.")
+    else if(request.responseText === "There is no such task.")
     {
       if(!document.querySelector('#alert1').classList.contains("alert-danger"))
       {
@@ -517,7 +526,7 @@ function removeTask()
       $('#alert1-text').html("There is no such task.");
       $('.alert').show('fade');
     }
-    if(request.responseText.startsWith("Task number"))
+    else if(request.responseText.startsWith("Task number"))
     {
       $('#my-content-table').remove();
       LoadTable();
@@ -532,3 +541,252 @@ function removeTask()
   }
   request.send();
 }
+
+
+
+
+
+function hireEmpModal()
+{
+  $('.alert').hide();
+  button2.innerHTML="Hire Employee";
+  let title3 = document.getElementById("modal-title3");
+  title3.style.textDecoration = "underline";
+  let title4 = document.getElementById("modal-title4");
+  title4.style.textDecoration = "none";
+  
+  button2.setAttribute("onclick", "hireEmployee()");
+}
+function fireEmpModal()
+{
+  $('.alert').hide();
+  button2.innerHTML="Fire Employee";
+  let title3 = document.getElementById("modal-title3");
+  title3.style.textDecoration = "none";
+  let title4 = document.getElementById("modal-title4");
+  title4.style.textDecoration = "underline";
+  
+  button2.setAttribute("onclick", "fireEmployee()");
+}
+function hireEmployee()
+{
+  let input1 = document.getElementsByName("input-field2")[0].value;
+  let input2 = document.getElementsByName("input-field3")[0].value;
+
+  let params = 'taskNumber=' + input1 + '&' + 'email=' + input2;
+  let request = new XMLHttpRequest();
+  request.open("POST", "http://localhost:8080/task/hireEmployee?" + params, true);
+  request.setRequestHeader('Authorization', localStorage.getItem('jwtToken'));
+  request.setRequestHeader("Accept", "application/json");
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.onload = () => 
+  {
+    if(request.responseText.includes("has been hired"))
+    {
+      $('#my-content-table').remove();
+      LoadTable();
+
+      if(!document.querySelector('#alert2').classList.contains("alert-success"))
+      {
+        document.querySelector('#alert2').classList.toggle("alert-success");
+        document.querySelector('#alert2').classList.remove("alert-danger");
+      }
+      $('#alert2-text').html(request.responseText);
+      $('.alert').show('fade');
+    }
+    else if(request.responseText === "Incorrect HTTP request params!")
+    {
+      if(!document.querySelector('#alert2').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert2').classList.toggle("alert-danger");
+        document.querySelector('#alert2').classList.remove("alert-success");
+      }
+      $('#alert2-text').html("Please enter valid input values.");
+      $('.alert').show('fade');
+    }
+    else
+    {
+      if(!document.querySelector('#alert2').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert2').classList.toggle("alert-danger");
+        document.querySelector('#alert2').classList.remove("alert-success");
+      }
+      $('#alert2-text').html(request.responseText);
+      $('.alert').show('fade');
+    }
+  }
+  request.send();
+}
+function fireEmployee()
+{
+  let input1 = document.getElementsByName("input-field2")[0].value;
+  let input2 = document.getElementsByName("input-field3")[0].value;
+
+  let params = 'taskNumber=' + input1 + '&' + 'email=' + input2;
+  let request = new XMLHttpRequest();
+  request.open("POST", "http://localhost:8080/task/fireEmployee?" + params, true);
+  request.setRequestHeader('Authorization', localStorage.getItem('jwtToken'));
+  request.setRequestHeader("Accept", "application/json");
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.onload = () => 
+  {
+    if(request.responseText.includes("has been fired"))
+    {
+      $('#my-content-table').remove();
+      LoadTable();
+      if(!document.querySelector('#alert2').classList.contains("alert-success"))
+      {
+        document.querySelector('#alert2').classList.toggle("alert-success");
+        document.querySelector('#alert2').classList.remove("alert-danger");
+      }
+      $('#alert2-text').html(request.responseText);
+      $('.alert').show('fade');
+    }
+    else if(request.responseText === "Incorrect HTTP request params!")
+    {
+      if(!document.querySelector('#alert2').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert2').classList.toggle("alert-danger");
+        document.querySelector('#alert2').classList.remove("alert-success");
+      }
+      $('#alert2-text').html("Please enter valid input values.");
+      $('.alert').show('fade');
+    }
+    else
+    {
+      if(!document.querySelector('#alert2').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert2').classList.toggle("alert-danger");
+        document.querySelector('#alert2').classList.remove("alert-success");
+      }
+      $('#alert2-text').html(request.responseText);
+      $('.alert').show('fade');
+    }
+  }
+  request.send();
+}
+
+
+
+
+function addPacketModal()
+{
+  $('.alert').hide();
+  button3.innerHTML="Add Packet";
+  let title5 = document.getElementById("modal-title5");
+  title5.style.textDecoration = "underline";
+  let title6 = document.getElementById("modal-title6");
+  title6.style.textDecoration = "none";
+  
+  button3.setAttribute("onclick", "addPacket()");
+}
+function removePacketModal()
+{
+  $('.alert').hide();
+  button3.innerHTML="Remove Packet";
+  let title5 = document.getElementById("modal-title5");
+  title5.style.textDecoration = "none";
+  let title6 = document.getElementById("modal-title6");
+  title6.style.textDecoration = "underline";
+  
+  button3.setAttribute("onclick", "removePacket()");
+}
+function addPacket()
+{
+  let input1 = document.getElementsByName("input-field4")[0].value;
+  let input2 = document.getElementsByName("input-field5")[0].value;
+
+  let params = 'packetId=' + input2 + '&' + 'taskId=' + input1;
+  let request = new XMLHttpRequest();
+  request.open("POST", "http://localhost:8080/task/addPacket?" + params, true);
+  request.setRequestHeader('Authorization', localStorage.getItem('jwtToken'));
+  request.setRequestHeader("Accept", "application/json");
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.onload = () => 
+  {
+    if(request.responseText.includes("has been included"))
+    {
+      $('#my-content-table').remove();
+      LoadTable();
+
+      if(!document.querySelector('#alert3').classList.contains("alert-success"))
+      {
+        document.querySelector('#alert3').classList.toggle("alert-success");
+        document.querySelector('#alert3').classList.remove("alert-danger");
+      }
+      $('#alert3-text').html(request.responseText);
+      $('.alert').show('fade');
+    }
+    else if(request.responseText === "Incorrect HTTP request params!")
+    {
+      if(!document.querySelector('#alert3').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert3').classList.toggle("alert-danger");
+        document.querySelector('#alert3').classList.remove("alert-success");
+      }
+      $('#alert3-text').html("Please enter valid input values.");
+      $('.alert').show('fade');
+    }
+    else
+    {
+      if(!document.querySelector('#alert3').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert3').classList.toggle("alert-danger");
+        document.querySelector('#alert3').classList.remove("alert-success");
+      }
+      $('#alert3-text').html(request.responseText);
+      $('.alert').show('fade');
+    }
+  }
+  request.send();
+}
+function removePacket()
+{
+  let input1 = document.getElementsByName("input-field4")[0].value;
+  let input2 = document.getElementsByName("input-field5")[0].value;
+
+  let params = 'packetId=' + input2 + '&' + 'taskId=' + input1;
+  let request = new XMLHttpRequest();
+  request.open("POST", "http://localhost:8080/task/removePacket?" + params, true);
+  request.setRequestHeader('Authorization', localStorage.getItem('jwtToken'));
+  request.setRequestHeader("Accept", "application/json");
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.onload = () => 
+  {
+    if(request.responseText.includes("has been excluded"))
+    {
+      $('#my-content-table').remove();
+      LoadTable();
+
+      if(!document.querySelector('#alert3').classList.contains("alert-success"))
+      {
+        document.querySelector('#alert3').classList.toggle("alert-success");
+        document.querySelector('#alert3').classList.remove("alert-danger");
+      }
+      $('#alert3-text').html(request.responseText);
+      $('.alert').show('fade');
+    }
+    else if(request.responseText === "Incorrect HTTP request params!")
+    {
+      if(!document.querySelector('#alert3').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert3').classList.toggle("alert-danger");
+        document.querySelector('#alert3').classList.remove("alert-success");
+      }
+      $('#alert3-text').html("Please enter valid input values.");
+      $('.alert').show('fade');
+    }
+    else
+    {
+      if(!document.querySelector('#alert3').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert3').classList.toggle("alert-danger");
+        document.querySelector('#alert3').classList.remove("alert-success");
+      }
+      $('#alert3-text').html(request.responseText);
+      $('.alert').show('fade');
+    }
+  }
+  request.send();
+}
+// ------------------------------------------------End of Admin-browseTasks Functions------------------------------------------------------
