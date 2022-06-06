@@ -497,6 +497,16 @@ function removeTask()
   //request.setRequestHeader('Access-Control-Allow-Credentials', 'true');
   request.onload = () => 
   {
+    if(request.status == '400') //Bad request
+    {
+      if(!document.querySelector('#alert1').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert1').classList.toggle("alert-danger");
+        document.querySelector('#alert1').classList.remove("alert-success");
+      }
+      $('#alert1-text').html("Please enter valid input values only.");
+      $('.alert').show('fade');
+    }
     if(request.responseText === "There is no such task.")
     {
       if(!document.querySelector('#alert1').classList.contains("alert-danger"))
