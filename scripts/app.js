@@ -93,7 +93,7 @@ async function fetchWarehouses()
             div.appendChild(infoCircle);
             div.appendChild(span);
 
-            let block = document.getElementById("index-page");
+            let block = document.getElementById("page__main__container");
             block.appendChild(div);
         };
     }
@@ -1106,10 +1106,18 @@ async function LoadEmployeeTable()
       {
         let td = _td_.cloneNode(false);
         let cellValue = arr[i][columns[j]];
+        if (cellValue == '')
+        cellValue = 'inactive';
+        if (cellValue == "1")
+        cellValue = 'active';
+        if (cellValue == 'ROLE_ADMIN')
+        cellValue = 'admin';
+        if (cellValue == 'ROLE_USER')
+        cellValue = 'user';
         
-         td.appendChild(document.createTextNode(cellValue || ''));
+        td.appendChild(document.createTextNode(cellValue || ''));
 
-         tr.appendChild(td);
+        tr.appendChild(td);
       }
       table.appendChild(thead);
       table.appendChild(tbody);
@@ -1133,6 +1141,10 @@ async function LoadEmployeeTable()
            key="name";
            if (key==='cityName')
            key="city";
+           if (key==='roles')
+           key="role";
+           if (key==='active')
+           key="account status";
           th.appendChild(document.createTextNode(key));
           tr.appendChild(th);
         }
@@ -1167,7 +1179,142 @@ async function LoadEmployeeTable()
       page__main__container.appendChild(buildHtmlTablePackets(response));
     })
 }
+
+function changeEmployeeProfile()
+{
+  //....
+}
 // ------------------------------------------------End of browse employees functions--------------------------------------------------------
 
+// ------------------------------------------------Start of browse warehouses functions--------------------------------------------------------
+
+function addWarehouseModal()
+{
+  $('.alert').hide();
+  button5.innerHTML="Add Warehouse";
+  let title9 = document.getElementById("modal-title9");
+  title9.style.textDecoration = "underline";
+  let title10 = document.getElementById("modal-title10");
+  title10.style.textDecoration = "none";
+
+  let label9 = document.getElementById("labelField9");
+  label9.innerHTML="Storage space";
+  let label10 = document.getElementById("labelField10");
+  $('#input-field10').css("display","block");
+  label10.style.display="block";
+  label10.innerHTML="City id";
+  
+  button5.setAttribute("onclick", "addWarehouse()");
+}
+function addCityModal()
+{
+  $('.alert').hide();
+  button5.innerHTML="Add City";
+  let title9 = document.getElementById("modal-title9");
+  title9.style.textDecoration = "none";
+  let title10 = document.getElementById("modal-title10");
+  title10.style.textDecoration = "underline";
+
+  let label9 = document.getElementById("labelField9");
+  label9.innerHTML="City name";
+  let label10 = document.getElementById("labelField10");
+  $('#input-field10').css("display","none");
+  label10.style.display="none";
+  
+  button5.setAttribute("onclick", "addCity()");
+}
+function addWarehouse()
+{
+  let input1 = document.getElementsByName("input-field9")[0].value;
+  let input2 = document.getElementsByName("input-field10")[0].value;
+
+  let params = 'storageSpace=' + input1 + '&' + 'cityId=' + input2;
+  let request = new XMLHttpRequest();
+  request.open("POST", "http://localhost:8080/employee/addWarehouse?" + params, true);
+  request.setRequestHeader('Authorization', localStorage.getItem('jwtToken'));
+  request.setRequestHeader("Accept", "application/json");
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.onload = () => 
+  {
+    if(request.responseText.includes("Warehouse added successfully"))
+    {
+      if(!document.querySelector('#alert5').classList.contains("alert-success"))
+      {
+        document.querySelector('#alert5').classList.toggle("alert-success");
+        document.querySelector('#alert5').classList.remove("alert-danger");
+      }
+      $('#alert5-text').html(request.responseText);
+      $('.alert').show('fade');
+    }
+    else if(request.responseText === "Incorrect HTTP request params!")
+    {
+      if(!document.querySelector('#alert5').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert5').classList.toggle("alert-danger");
+        document.querySelector('#alert5').classList.remove("alert-success");
+      }
+      $('#alert5-text').html("Please enter valid input values.");
+      $('.alert').show('fade');
+    }
+    else
+    {
+      if(!document.querySelector('#alert5').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert5').classList.toggle("alert-danger");
+        document.querySelector('#alert5').classList.remove("alert-success");
+      }
+      $('#alert5-text').html(request.responseText);
+      $('.alert').show('fade');
+    }
+  }
+  request.send();
+}
+function addCity()
+{
+  let input1 = document.getElementsByName("input-field9")[0].value;
+
+  let params = 'cityName=' + input1;
+  let request = new XMLHttpRequest();
+  request.open("POST", "http://localhost:8080/employee/addCity?" + params, true);
+  request.setRequestHeader('Authorization', localStorage.getItem('jwtToken'));
+  request.setRequestHeader("Accept", "application/json");
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.onload = () => 
+  {
+    if(request.responseText.includes("City added successfully"))
+    {
+      if(!document.querySelector('#alert5').classList.contains("alert-success"))
+      {
+        document.querySelector('#alert5').classList.toggle("alert-success");
+        document.querySelector('#alert5').classList.remove("alert-danger");
+      }
+      $('#alert5-text').html(request.responseText);
+      $('.alert').show('fade');
+    }
+    else if(request.responseText === "Incorrect HTTP request params!")
+    {
+      if(!document.querySelector('#alert5').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert5').classList.toggle("alert-danger");
+        document.querySelector('#alert5').classList.remove("alert-success");
+      }
+      $('#alert5-text').html("Please enter valid input values.");
+      $('.alert').show('fade');
+    }
+    else
+    {
+      if(!document.querySelector('#alert5').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert5').classList.toggle("alert-danger");
+        document.querySelector('#alert5').classList.remove("alert-success");
+      }
+      $('#alert5-text').html(request.responseText);
+      $('.alert').show('fade');
+    }
+  }
+  request.send();
+}
+
+// ------------------------------------------------End of browse warehouses functions--------------------------------------------------------
 
 // ------------------------------------------------End of Admin-HOME Functions------------------------------------------------------

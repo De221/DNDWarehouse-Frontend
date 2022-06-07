@@ -84,9 +84,6 @@
                             <a href="#employee_table" class="side_submenu_item" id="employee_table_a">Browse employees</a>
                         </li>
                         <li>
-                            <a href="#" class="side_submenu_item">Persist/Delete employee</a>
-                        </li>
-                        <li>
                             <a href="#" class="side_submenu_item">Change employee profile</a>
                         </li>
                     </ul>
@@ -101,7 +98,7 @@
                             <a href="#" class="side_submenu_item">Browse Warehouses</a>
                         </li>
                         <li>
-                            <a href="#" class="side_submenu_item">Add/Remove warehouse</a>
+                            <a href="#add_warehouse/city" class="side_submenu_item" data-target="#addWarehouseOrCityModal" data-toggle="modal">Add warehouse/city</a>
                         </li>
                         <li>
                             <a href="#" class="side_submenu_item">Transfer packet</a>
@@ -256,6 +253,41 @@
                             </div>
                         </div>
                         <!--MODAL Receive/Delete Packet-->
+
+                        <!--MODAL Add Warehouse-->
+                        <div class="modal fade" id="addWarehouseOrCityModal" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="dual-modal-title" id="modal-title9" style="text-decoration: underline;" onclick="addWarehouseModal()">Add Warehouse</h4>
+                                        <h4 class="dual-modal-title" id="modal-title10" onclick="addCityModal()">Add City</h4>
+                                        <button class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form>
+                                            <div class="form-group">
+                                                <label for="labelField9" id="labelField9">Storage space</label>
+                                                <input type="text" class="form-control" id="input-field9" name="input-field9" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="labelField10" id="labelField10">City id</label>
+                                                <input type="text" class="form-control" id="input-field10" name="input-field10" required>
+                                            </div>
+                                        </form>
+                                        <div class="alert" id="alert5">
+                                            <button type="button" id="link-close5" class="close">&times;</button>
+                                            <h6 class="text-center", id="alert5-text"></h6>
+                                            </div>
+                                        
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-primary" id="button5" onclick="addWarehouse()">Add Warehouse</button>
+                                        <button class="btn btn-primary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--MODAL Add Warehouse-->
     </div> 
 
     </div>
