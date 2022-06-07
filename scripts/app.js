@@ -52,8 +52,11 @@ function login() {
 }
 $('#link-close').click(function(){$('#alert1').hide('fade');}); // close alert incorrect login info
 
-jQuery( "li:has(ul)" ).hover(function(){ // When a li that has a ul is clicked ...
-	jQuery(this).toggleClass('active');}); // then toggle (add/remove) the class 'active' on it. 
+jQuery( "li:has(ul)" ).hover(function()
+{ // When a li that has a ul is hovered upon ...
+	jQuery(this).toggleClass('active');
+
+}); // then toggle (add/remove) the class 'active' on it. 
 
 function logout() {
   localStorage.setItem('jwtToken', 'null');
@@ -210,6 +213,10 @@ function transferUser(){
       const dt = new Date(strDate).getTime();  
       return dt;
     }
+    // ------------------------------------------------Start of Admin-HOME Functions------------------------------------------------------
+
+    
+// ------------------------------------------------Start of Tasks-Table------------------------------------------------------------------------
   async function LoadTaskTable() 
   {
     function buildHtmlTable(arr)
@@ -243,24 +250,24 @@ function transferUser(){
               divMain.className="dropdown-content";
               cellValue.forEach(obj => 
               {
-                let div = _div_.cloneNode(false);
+                var div = _div_.cloneNode(false);
                 div.className="side-dropdown-content";
-                let subdiv0 = _div_.cloneNode(false);
+                var subdiv0 = _div_.cloneNode(false);
                 subdiv0.innerHTML="id: " + obj["id"];
                 div.appendChild(subdiv0);
-                let subdiv1 = _div_.cloneNode(false);
+                var subdiv1 = _div_.cloneNode(false);
                 subdiv1.innerHTML="weight: " + obj["weight"];
                 div.appendChild(subdiv1);
-                let subdiv2 = _div_.cloneNode(false);
+                var subdiv2 = _div_.cloneNode(false);
                 subdiv2.innerHTML="warehouse id: " + obj["warehouseId"];
                 div.appendChild(subdiv2);                
 
                 divMain.appendChild(div);
-                let divText = _div_.cloneNode(false);
+                var divText = _div_.cloneNode(false);
                 divText.innerHTML=obj["name"];
                 divText.className="divText";
                 divMain.appendChild(divText);
-                let img = _img_.cloneNode(false);
+                var img = _img_.cloneNode(false);
                 img.setAttribute("src", "https://www.svgrepo.com/show/98299/right-arrow.svg");
                 img.className="side-arrow-svg";      
                 let translateY = -25.92; // hard-coded ......
@@ -273,24 +280,24 @@ function transferUser(){
             {
               button.innerHTML=arr[i][columns[1]] + " employees";
               button.className="dropbtn";
-              let divMain = _div_.cloneNode(false);
+              var divMain = _div_.cloneNode(false);
               divMain.className="dropdown-content";
               cellValue.forEach(obj => {
-                let div = _div_.cloneNode(false);
+                var div = _div_.cloneNode(false);
                 div.className="side-dropdown-content";
-                let subdiv0 = _div_.cloneNode(false);
+                var subdiv0 = _div_.cloneNode(false);
                 subdiv0.innerHTML="id: " + obj["id"];
                 div.appendChild(subdiv0);
-                let subdiv1 = _div_.cloneNode(false);
+                var subdiv1 = _div_.cloneNode(false);
                 subdiv1.innerHTML="email: " + obj["email"];
                 div.appendChild(subdiv1);                          
 
                 divMain.appendChild(div);
-                let divText = _div_.cloneNode(false);
+                var divText = _div_.cloneNode(false);
                 divText.innerHTML=obj["fullName"];
                 divText.className="divText";
                 divMain.appendChild(divText);
-                let img = _img_.cloneNode(false);
+                var img = _img_.cloneNode(false);
                 img.setAttribute("src", "https://www.svgrepo.com/show/98299/right-arrow.svg");
                 img.className="side-arrow-svg";      
                 let translateY = -25.92; // hard-coded ......
@@ -399,7 +406,7 @@ function transferUser(){
         ));
       });
   }
-// Close the dropdown menu if the user clicks outside of it.
+// Close the dropdown menu if the user clicks outside of it.                             -------------- Works for future Tables also -----------------
 window.addEventListener('mouseover', function ( event ) 
 {
   if (!(event.target.matches('.dropbtn') || event.target.matches('.dropdown-content') 
@@ -427,13 +434,24 @@ window.addEventListener('mouseover', function ( event )
     }
   }
 });
-// ------------------------------------------------End of Admin-browseTasks------------------------------------------------------
-// ------------------------------------------------Start of Admin-browseTasks Functions------------------------------------------------------
+// ------------------------------------------------End of Tasks-Table------------------------------------------------------------------------
+
+// ------------------------------------------------Start of Panel for Table calls------------------------------------------------------
 
 function reLoadTaskTable()
 {
   $('#my-content-table').remove();
   LoadTaskTable();
+}
+function reLoadPacketTable()
+{
+  $('#my-content-table').remove();
+  LoadPacketTable();
+}
+function reLoadEmployeeTable()
+{
+  $('#my-content-table').remove();
+  LoadEmployeeTable();
 }
 
 window.addEventListener("load", () => {
@@ -455,8 +473,47 @@ window.addEventListener("load", () => {
   });
   } 
 });
+window.addEventListener("load", () => {
+  let element = document.querySelector("#packet_table_icon");
+  if(typeof(element) != 'undefined' && element != null)
+  {
+    document.querySelector("#packet_table_icon").addEventListener("click", e => {
+      reLoadPacketTable();
+  });
+  } 
+});
 
+window.addEventListener("load", () => {
+  let element = document.querySelector("#packet_table_a");
+  if(typeof(element) != 'undefined' && element != null)
+  {
+    document.querySelector("#packet_table_a").addEventListener("click", e => {
+      reLoadPacketTable();
+  });
+  } 
+});
 
+window.addEventListener("load", () => {
+  let element = document.querySelector("#employee_table_icon");
+  if(typeof(element) != 'undefined' && element != null)
+  {
+    document.querySelector("#employee_table_icon").addEventListener("click", e => {
+      reLoadEmployeeTable();
+  });
+  } 
+});
+
+window.addEventListener("load", () => {
+  let element = document.querySelector("#employee_table_a");
+  if(typeof(element) != 'undefined' && element != null)
+  {
+    document.querySelector("#employee_table_a").addEventListener("click", e => {
+      reLoadEmployeeTable();
+  });
+  } 
+});
+
+// ------------------------------------------------End of Panel for Table calls------------------------------------------------------
 
 function createTaskModal(){
 $('.alert').hide();
@@ -576,8 +633,6 @@ function removeTask()
   }
   request.send();
 }
-
-
 
 
 
@@ -702,7 +757,7 @@ function fireEmployee()
 
 
 
-function addPacketModal()
+function addTaskPacketModal()
 {
   $('.alert').hide();
   button3.innerHTML="Add Packet";
@@ -713,7 +768,7 @@ function addPacketModal()
   
   button3.setAttribute("onclick", "addPacket()");
 }
-function removePacketModal()
+function removeTaskPacketModal()
 {
   $('.alert').hide();
   button3.innerHTML="Remove Packet";
@@ -820,4 +875,299 @@ function removePacket()
   }
   request.send();
 }
-// ------------------------------------------------End of Admin-browseTasks Functions------------------------------------------------------
+
+// ------------------------------------------------Start of browse packets functions------------------------------------------------------
+async function LoadPacketTable()
+{
+  function buildHtmlTablePackets(arr)
+  {
+    let table = _table_.cloneNode(false),
+      thead = _thead_.cloneNode(false),
+      tbody = _tbody_.cloneNode(false),
+      columns = addAllColumnHeaders(arr, table);
+    for (let i = 0, maxi = arr.length; i < maxi; ++i) 
+    { //table rows and columns
+      let tr = _tr_.cloneNode(false);
+      for (let j = 0, maxj = columns.length; j < maxj; ++j) 
+      {
+        let td = _td_.cloneNode(false);
+        let cellValue = arr[i][columns[j]];
+        
+         td.appendChild(document.createTextNode(cellValue || ''));
+
+         tr.appendChild(td);
+      }
+      table.appendChild(thead);
+      table.appendChild(tbody);
+      tbody.appendChild(tr);
+      table.className="content-table";
+      table.id="my-content-table";
+    }
+    return table;
+  };
+  function addAllColumnHeaders(arr, table)  // Table headers
+  {
+    let columnSet = [],
+      tr = _tr_.cloneNode(false),
+      thead = _thead_.cloneNode(false);
+    for (let i = 0, l = arr.length; i < l; i++) {
+      for (let key in arr[i]) {
+        if (arr[i].hasOwnProperty(key) && columnSet.indexOf(key) === -1) {
+          columnSet.push(key);
+          let th = _th_.cloneNode(false);
+           if (key==='cityName')
+           key="location";
+           if (key==='warehouseId')
+           key="warehouse id";
+          th.appendChild(document.createTextNode(key));
+          tr.appendChild(th);
+        }
+      }
+    }
+    thead.appendChild(tr);
+    table.appendChild(thead);
+    return columnSet;
+  }
+    let _table_ = document.createElement('table');
+    _thead_ = document.createElement('thead'),
+    _tbody_ = document.createElement('tbody'),
+    _tr_ = document.createElement('tr'),
+    _th_ = document.createElement('th'),
+    _td_ = document.createElement('td');
+    _div_ = document.createElement('div');
+    _button_ = document.createElement('button');
+    _img_ = document.createElement('img');
+    const page__main__container = document.querySelector('#page__main__container');
+
+    const myHeaders = new Headers();
+    myHeaders.append('Authorization', localStorage.getItem('jwtToken'));
+    let json = await fetch('http://localhost:8080/packet/fetch',
+    {
+      method: 'GET',
+      headers: myHeaders,
+    })
+    .then(response => response.json())
+    .then((response) => 
+    {
+      //console.log(response);
+      page__main__container.appendChild(buildHtmlTablePackets(response));
+    })
+}
+
+function receivePacketModal()
+{
+  $('.alert').hide();
+  button4.innerHTML="Receive Packet";
+  let title7 = document.getElementById("modal-title7");
+  title7.style.textDecoration = "underline";
+  let title8 = document.getElementById("modal-title8");
+  title8.style.textDecoration = "none";
+  let label7 = document.getElementById("labelField7");
+  $('#input-field7').css("display","block");
+  label7.style.display="block";
+  label7.innerHTML="Packet weight";
+  let label8 = document.getElementById("labelField8");
+  $('#input-field8').css("display","block");
+  label8.style.display="block";
+  label8.innerHTML="Warehouse id";
+  
+  button4.setAttribute("onclick", "receivePacket()");
+}
+function deletePacketModal()
+{
+  $('.alert').hide();
+  button4.innerHTML="Delete Packet";
+  let title7 = document.getElementById("modal-title7");
+  title7.style.textDecoration = "none";
+  let title8 = document.getElementById("modal-title8");
+  title8.style.textDecoration = "underline";
+  let label7 = document.getElementById("labelField7");
+  $('#input-field7').css("display","none");
+  label7.style.display="none";
+  let label8 = document.getElementById("labelField8");
+  $('#input-field8').css("display","none");
+  label8.style.display="none";
+  
+  button4.setAttribute("onclick", "deletePacket()");
+}
+
+function receivePacket()
+{
+  let input1 = document.getElementsByName("input-field6")[0].value;
+  let input2 = document.getElementsByName("input-field7")[0].value;
+  let input3 = document.getElementsByName("input-field8")[0].value;
+
+  let params = 'packetName=' + input1 + '&' + 'weight=' + input2 + '&' + 'warehouseId=' + input3;
+  let request = new XMLHttpRequest();
+  request.open("POST", "http://localhost:8080/packet/receiveNew?" + params, true);
+  request.setRequestHeader('Authorization', localStorage.getItem('jwtToken'));
+  request.setRequestHeader("Accept", "application/json");
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.setRequestHeader('Access-Control-Allow-Origin', '*');
+  request.onload = () => 
+  {
+    if(request.responseText.includes("appeared in warehouse"))
+    {
+      reLoadPacketTable()
+
+      if(!document.querySelector('#alert4').classList.contains("alert-success"))
+      {
+        document.querySelector('#alert4').classList.toggle("alert-success");
+        document.querySelector('#alert4').classList.remove("alert-danger");
+      }
+      $('#alert4-text').html(request.responseText);
+      $('.alert').show('fade');
+    }
+    else if(request.responseText === "Incorrect HTTP request params!")
+    {
+      if(!document.querySelector('#alert4').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert4').classList.toggle("alert-danger");
+        document.querySelector('#alert4').classList.remove("alert-success");
+      }
+      $('#alert4-text').html("Please enter valid input values.");
+      $('.alert').show('fade');
+    }
+    else
+    {
+      if(!document.querySelector('#alert4').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert4').classList.toggle("alert-danger");
+        document.querySelector('#alert4').classList.remove("alert-success");
+      }
+      $('#alert4-text').html(request.responseText);
+      $('.alert').show('fade');
+    }
+  }
+  request.send();
+}
+function deletePacket()
+{
+  let input1 = document.getElementsByName("input-field6")[0].value;
+
+  let params = 'packetName=' + input1;
+  let request = new XMLHttpRequest();
+  request.open("DELETE", "http://localhost:8080/packet/remove?" + params, true);
+  request.setRequestHeader('Authorization', localStorage.getItem('jwtToken'));
+  request.setRequestHeader("Accept", "application/json");
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.onload = () => 
+  {
+    if(request.responseText.includes("has been deleted"))
+    {
+      reLoadPacketTable()
+
+      if(!document.querySelector('#alert4').classList.contains("alert-success"))
+      {
+        document.querySelector('#alert4').classList.toggle("alert-success");
+        document.querySelector('#alert4').classList.remove("alert-danger");
+      }
+      $('#alert4-text').html(request.responseText);
+      $('.alert').show('fade');
+    }
+    else if(request.responseText === "Incorrect HTTP request params!")
+    {
+      if(!document.querySelector('#alert4').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert4').classList.toggle("alert-danger");
+        document.querySelector('#alert4').classList.remove("alert-success");
+      }
+      $('#alert4-text').html("Please enter valid input values.");
+      $('.alert').show('fade');
+    }
+    else
+    {
+      if(!document.querySelector('#alert4').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alert4').classList.toggle("alert-danger");
+        document.querySelector('#alert4').classList.remove("alert-success");
+      }
+      $('#alert4-text').html(request.responseText);
+      $('.alert').show('fade');
+    }
+  }
+  request.send();
+}
+// ------------------------------------------------End of browse packets functions--------------------------------------------------------
+
+// ------------------------------------------------Start of browse employees functions--------------------------------------------------------
+async function LoadEmployeeTable()
+{
+  function buildHtmlTablePackets(arr)
+  {
+    let table = _table_.cloneNode(false),
+      thead = _thead_.cloneNode(false),
+      tbody = _tbody_.cloneNode(false),
+      columns = addAllColumnHeaders(arr, table);
+    for (let i = 0, maxi = arr.length; i < maxi; ++i) 
+    { //table rows and columns
+      let tr = _tr_.cloneNode(false);
+      for (let j = 0, maxj = columns.length; j < maxj; ++j) 
+      {
+        let td = _td_.cloneNode(false);
+        let cellValue = arr[i][columns[j]];
+        
+         td.appendChild(document.createTextNode(cellValue || ''));
+
+         tr.appendChild(td);
+      }
+      table.appendChild(thead);
+      table.appendChild(tbody);
+      tbody.appendChild(tr);
+      table.className="content-table";
+      table.id="my-content-table";
+    }
+    return table;
+  };
+  function addAllColumnHeaders(arr, table)  // Table headers
+  {
+    let columnSet = [],
+      tr = _tr_.cloneNode(false),
+      thead = _thead_.cloneNode(false);
+    for (let i = 0, l = arr.length; i < l; i++) {
+      for (let key in arr[i]) {
+        if (arr[i].hasOwnProperty(key) && columnSet.indexOf(key) === -1) {
+          columnSet.push(key);
+          let th = _th_.cloneNode(false);
+           if (key==='fullName')
+           key="name";
+           if (key==='cityName')
+           key="city";
+          th.appendChild(document.createTextNode(key));
+          tr.appendChild(th);
+        }
+      }
+    }
+    thead.appendChild(tr);
+    table.appendChild(thead);
+    return columnSet;
+  }
+    let _table_ = document.createElement('table');
+    _thead_ = document.createElement('thead'),
+    _tbody_ = document.createElement('tbody'),
+    _tr_ = document.createElement('tr'),
+    _th_ = document.createElement('th'),
+    _td_ = document.createElement('td');
+    _div_ = document.createElement('div');
+    _button_ = document.createElement('button');
+    _img_ = document.createElement('img');
+    const page__main__container = document.querySelector('#page__main__container');
+
+    const myHeaders = new Headers();
+    myHeaders.append('Authorization', localStorage.getItem('jwtToken'));
+    let json = await fetch('http://localhost:8080/employee/fetch',
+    {
+      method: 'GET',
+      headers: myHeaders,
+    })
+    .then(response => response.json())
+    .then((response) => 
+    {
+      //console.log(response);
+      page__main__container.appendChild(buildHtmlTablePackets(response));
+    })
+}
+// ------------------------------------------------End of browse employees functions--------------------------------------------------------
+
+
+// ------------------------------------------------End of Admin-HOME Functions------------------------------------------------------

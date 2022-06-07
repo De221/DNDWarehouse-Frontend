@@ -12,7 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </head>
-<body onload="getUserInfo()">
+<body onload="getUserInfo(), reLoadTaskTable()">
     <!--Navbar Section-->
     <nav class="navbar">
         <div class="navbar_container">
@@ -23,7 +23,7 @@
                     <p class="navbar__links" id="user-name"></p>
                 </li>
                 <li class="navbar__item">
-                    <a href="#logout" class="navbar__links" id="about-page" onclick="logout()">Log out</a>
+                    <a href="#logout" class="navbar__links" id="about-page" onclick=logout()>Log out</a>
                 </li>   
             </ul>
         </div>
@@ -41,47 +41,47 @@
             </div>            
             <ul class="side__navbar__menu">
                 <li class="side__navbar__item">
-                    <a href="#" class="side__navbar__links" id="1st item1">
+                    <a href="#task_table" class="side__navbar__links" id="task_table_icon">
                         <img class="menu_dots" src="https://www.svgrepo.com/show/11307/task-list.svg" alt="menu_dots">
                         <span class="links_name">Tasks</span>
                     </a>
                     <ul>
                         <li>
-                            <a href="https://de221.github.io/DNDWarehouse-Frontend/admin-browseTasks" class="side_submenu_item">Browse tasks</a>
+                            <a href="#task_table" class="side_submenu_item" id="task_table_a">Browse tasks</a>
                         </li>
                         <li>
-                            <a href="#" class="side_submenu_item">Create/Remove task</a>
+                            <a href="#create/remove_task" class="side_submenu_item" data-target="#CreateRemoveTaskModal" data-toggle="modal">Create/Remove task</a>
                         </li>
                         <li>
-                            <a href="#" class="side_submenu_item">Hire/Fire task-employee</a>
+                            <a href="#hire/fire_employee" class="side_submenu_item" data-target="#HireFireEmployeeModal" data-toggle="modal">Hire/Fire task-employee</a>
                         </li>
                         <li>
-                            <a href="#" class="side_submenu_item">Add/Remove task-packet</a>
+                            <a href="#add/remove_packet" class="side_submenu_item" data-target="#AddRemoveTaskPacketModal" data-toggle="modal">Add/Remove task-packet</a>
                         </li>
                     </ul>
                 </li>
                 <li class="side__navbar__item">
-                    <a href="#" class="side__navbar__links" id="1st item">
+                    <a href="#packet_table" class="side__navbar__links" id="packet_table_icon">
                         <img class="menu_dots" src="https://www.svgrepo.com/show/125625/package.svg" alt="menu_dots">
                         <span class="links_name">Packets</span>
                     </a>
                     <ul>
                         <li>
-                            <a href="#" class="side_submenu_item">Browse packets</a>
+                            <a href="#packet_table" class="side_submenu_item" id="packet_table_a">Browse packets</a>
                         </li>
                         <li>
-                            <a href="#" class="side_submenu_item">Recive/Remove packet</a>
+                            <a href="#receive/delete_packet" class="side_submenu_item" data-target="#ReceiveDeletePacketModal" data-toggle="modal">Receive/Delete packet</a>
                         </li>
                     </ul>
                 </li>
                 <li class="side__navbar__item">
-                    <a href="#" class="side__navbar__links" id="1st item">
+                    <a href="#employee_table" class="side__navbar__links" id="employee_table_icon">
                         <img class="menu_dots" src="https://www.svgrepo.com/show/166665/employees.svg" alt="menu_dots">
                         <span class="links_name">Employees</span>
                     </a>
                     <ul>
                         <li>
-                            <a href="#" class="side_submenu_item">Browse employees</a>
+                            <a href="#employee_table" class="side_submenu_item" id="employee_table_a">Browse employees</a>
                         </li>
                         <li>
                             <a href="#" class="side_submenu_item">Persist/Delete employee</a>
@@ -92,7 +92,7 @@
                     </ul>
                 </li>
                 <li class="side__navbar__item">
-                    <a href="#" class="side__navbar__links" id="1st item">
+                    <a href="#" class="side__navbar__links">
                         <img class="menu_dots" src="https://www.svgrepo.com/show/8584/warehouse.svg" alt="menu_dots">
                         <span class="links_name">Warehouses</span>
                     </a>
@@ -111,6 +111,153 @@
             </ul>
         </div>
     </nav>
+
+    <div class="page__information" id="page__main__container">
+                        <!--MODAL Create/Remove Task-->
+                        <div class="modal fade" id="CreateRemoveTaskModal" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="dual-modal-title" id="modal-title1" style="text-decoration: underline;" onclick="createTaskModal()">Create Task</h4>
+                                        <h4 class="dual-modal-title" id="modal-title2" onclick="removeTaskModal()">Remove Task</h4>
+                                        <button class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form>
+                                            <div class="form-group">
+                                                <label for="labelField1" id="labelField1">Task name</label>
+                                                <input type="text" class="form-control" name="input-field1" required>
+                                            </div>
+                                            <!-- <div class="form-group">
+                                                <label for="inputField2">Field2</label>
+                                                <input type="text" class="form-control" required>
+                                            </div> -->
+                                        </form>
+                                        <div class="alert" id="alert1">
+                                            <button type="button" id="link-close" class="close">&times;</button>
+                                            <h6 class="text-center", id="alert1-text"></h6>
+                                          </div>
+                                        
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-primary" id="button1" onclick="createNewTask()">Create task</button>
+                                        <button class="btn btn-primary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--MODAL Create/Remove Task-->
+
+                        <!--MODAL Hire/Fire Employee-->
+                        <div class="modal fade" id="HireFireEmployeeModal" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="dual-modal-title" id="modal-title3" style="text-decoration: underline;" onclick="hireEmpModal()">Hire Employee</h4>
+                                        <h4 class="dual-modal-title" id="modal-title4" onclick="fireEmpModal()">Fire Employee</h4>
+                                        <button class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form>
+                                            <div class="form-group">
+                                                <label for="labelField2" id="labelField2">Task id</label>
+                                                <input type="text" class="form-control" name="input-field2" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="labelField3" id="labelField3">Employee email</label>
+                                                <input type="text" class="form-control" name="input-field3" required>
+                                            </div>
+                                        </form>
+                                        <div class="alert" id="alert2">
+                                            <button type="button" id="link-close2" class="close">&times;</button>
+                                            <h6 class="text-center", id="alert2-text"></h6>
+                                            </div>
+                                        
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-primary" id="button2" onclick="hireEmployee()">Hire Employee</button>
+                                        <button class="btn btn-primary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--MODAL Hire/Fire Employee-->
+
+                        <!--MODAL Add/Remove Task Packet-->
+                        <div class="modal fade" id="AddRemoveTaskPacketModal" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="dual-modal-title" id="modal-title5" style="text-decoration: underline;" onclick="addTaskPacketModal()">Add Packet</h4>
+                                        <h4 class="dual-modal-title" id="modal-title6" onclick="removeTaskPacketModal()">Remove Packet</h4>
+                                        <button class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form>
+                                            <div class="form-group">
+                                                <label for="labelField4" id="labelField4">Task id</label>
+                                                <input type="text" class="form-control" name="input-field4" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="labelField5" id="labelField5">Packet id</label>
+                                                <input type="text" class="form-control" name="input-field5" required>
+                                            </div>
+                                        </form>
+                                        <div class="alert" id="alert3">
+                                            <button type="button" id="link-close3" class="close">&times;</button>
+                                            <h6 class="text-center", id="alert3-text"></h6>
+                                            </div>
+                                        
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-primary" id="button3" onclick="addPacket()">Add Packet</button>
+                                        <button class="btn btn-primary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--MODAL Add/Remove Task Packet-->
+
+                        <!--MODAL Receive/Delete Packet-->
+                        <div class="modal fade" id="ReceiveDeletePacketModal" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="dual-modal-title" id="modal-title7" style="text-decoration: underline;" onclick="receivePacketModal()">Receive new Packet</h4>
+                                        <h4 class="dual-modal-title" id="modal-title8" onclick="deletePacketModal()">Delete Packet</h4>
+                                        <button class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form>
+                                            <div class="form-group">
+                                                <label for="labelField6" id="labelField6">Packet name</label>
+                                                <input type="text" class="form-control" id="input-field6" name="input-field6" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="labelField7" id="labelField7">Packet weight</label>
+                                                <input type="text" class="form-control" id="input-field7" name="input-field7" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="labelField8" id="labelField8">Warehouse id</label>
+                                                <input type="text" class="form-control" id="input-field8" name="input-field8" required>
+                                            </div>
+                                        </form>
+                                        <div class="alert" id="alert4">
+                                            <button type="button" id="link-close4" class="close">&times;</button>
+                                            <h6 class="text-center", id="alert4-text"></h6>
+                                            </div>
+                                        
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-primary" id="button4" onclick="receivePacket()">Receive Packet</button>
+                                        <button class="btn btn-primary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--MODAL Receive/Delete Packet-->
+    </div> 
+
     </div>
     <script src="scripts/app.js"></script>
 </body>
