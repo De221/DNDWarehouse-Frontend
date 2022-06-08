@@ -45,7 +45,7 @@ function login() {
         }
         else
         {
-          $('.alert').show('fade');
+          $('#alert1').show('fade');
           //$('.alert').css("display","block"); 
         }
       })
@@ -111,6 +111,47 @@ async function fetchWarehouses()
             }
             //console.log(listWarehouseStorages);
             putWarehouses(json.length, listCityNames, listWarehouseStorages);
+        })   
+}
+async function fetchWarehousesWithId() 
+{
+    let listIdAndCityNames = [];
+    let listWarehouseStorages = [];
+    function putWarehouses(length, spantext, circleText) {
+        for (let i = 0; i < length; i++) {
+            let div = document.createElement("div");
+            div.className="warehouse__icon";
+            let img = document.createElement("img");
+            img.setAttribute("src", "https://cdn-icons-png.flaticon.com/512/189/189214.png");
+            let infoCircle = document.createElement("div");
+            infoCircle.className="quick__info__circle";
+            infoCircle.innerHTML="Storage:" + circleText[i];
+            let span = document.createElement("span");
+            span.className="warehouse__icon__text";
+            span.textContent=spantext[i];
+
+            div.appendChild(img);
+            div.appendChild(infoCircle);
+            div.appendChild(span);
+
+            let block = document.getElementById("page__main__container");
+            block.appendChild(div);
+        };
+    }
+    
+    let json = await fetch('http://localhost:8080/packet/fetchWarehouses')
+    .then(response => {return response.json();})
+    .then(json => 
+        { 
+            //console.log(json); 
+            //console.log(json.length);
+            for (let warehouse of json) {
+                //console.log(warehouse);--> full info
+                listIdAndCityNames.push('Id: ' + warehouse['id'] + ', ' + warehouse['cityName']);
+                listWarehouseStorages.push(warehouse['storage_space']);
+            }
+            //console.log(listWarehouseStorages);
+            putWarehouses(json.length, listIdAndCityNames, listWarehouseStorages);
         })   
 }
     function getUserInfo() {
@@ -209,203 +250,362 @@ function transferAdmin(){
 function transferUser(){
   window.location.href = 'https://de221.github.io/DNDWarehouse-Frontend/user-home';
 }  
-    const toTimestamp = (strDate) => {  //timestamp to UNIX time
-      const dt = new Date(strDate).getTime();  
-      return dt;
+const toTimestamp = (strDate) => {  //timestamp to UNIX time
+  const dt = new Date(strDate).getTime();  
+  return dt;
+}
+
+$(document).ready(function(){
+  $('#spanLogin2').click(function() 
+  {
+    $('#loginModal').modal('hide');
+    $('#SignupModal').modal('show');
+    loadCityOptions();
+  });  
+});
+
+let cityName;
+
+async function loadCityOptions()
+{
+  $('.dropdown-options').remove();
+  await fetch('http://localhost:8080/employee/fetchCity',
+    {
+      method: 'GET',
+    })
+    .then(response => response.json())
+    .then((response) =>
+    {     
+      let counter = 0;
+      for (let item of response) 
+      {
+        if(counter == 0)
+          cityName = item['name'];
+        counter++;
+        let option = document.createElement('option');
+        option.className="dropdown-options"
+        option.innerHTML=item['name'];
+        document.querySelector('#selectCity').appendChild(option);
+      }    
+    });
+}
+if(document.getElementById('selectCity') != null)
+{
+  document.getElementById('selectCity').addEventListener('change', function() {
+    cityName = this.value;
+  });
+} 
+function Signup()
+{
+  let input1 = document.getElementsByName("fname")[0].value;
+  let input2 = document.getElementsByName("lname")[0].value;
+  let input3 = document.getElementsByName("email1")[0].value;
+  let input4 = document.getElementsByName("password1")[0].value;
+
+  let params = 'fname=' + input1 + '&' + 'lname=' + input2 + '&' + 'cityName=' + cityName + '&' + 'email=' + input3 + '&' + 'password=' + input4;
+  let request = new XMLHttpRequest();
+  request.open("POST", "http://localhost:8080/employee/save?" + params, true);
+  request.setRequestHeader("Accept", "application/json");
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.onload = () => 
+  {
+    if(request.responseText.includes("Registration"))
+    {
+      if(!document.querySelector('#alertSignup').classList.contains("alert-success"))
+      {
+        document.querySelector('#alertSignup').classList.toggle("alert-success");
+        document.querySelector('#alertSignup').classList.remove("alert-danger");
+      }
+      $('#alertSignup-text').html(request.responseText);
+      $('#alertSignup').show('fade');
     }
-    // ------------------------------------------------Start of Admin-HOME Functions------------------------------------------------------
+    else if(request.responseText === "Incorrect HTTP request params!")
+    {
+      if(!document.querySelector('#alertSignup').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alertSignup').classList.toggle("alert-danger");
+        document.querySelector('#alertSignup').classList.remove("alert-success");
+      }
+      $('#alertSignup-text').html("Please enter valid input values.");
+      $('#alertSignup').show('fade');
+    }
+    else
+    {
+      if(!document.querySelector('#alertSignup').classList.contains("alert-danger"))
+      {
+        document.querySelector('#alertSignup').classList.toggle("alert-danger");
+        document.querySelector('#alertSignup').classList.remove("alert-success");
+      }
+      $('#alertSignup-text').html(request.responseText);
+      $('#alertSignup').show('fade');
+    }
+  }
+  request.send();
+}
+
+window.addEventListener("load", () => {
+  let element = document.querySelector("#about-page");
+  if(typeof(element) != 'undefined' && element != null)
+  {
+    document.querySelector("#about-page").addEventListener("click", e => {
+      aboutPage();
+  });
+  } 
+});
+
+window.addEventListener("load", () => {
+  let element = document.querySelector("#contacts-page");
+  if(typeof(element) != 'undefined' && element != null)
+  {
+    document.querySelector("#contacts-page").addEventListener("click", e => {
+      contactsPage();
+  });
+  } 
+});
+
+function aboutPage()
+{
+  let container = document.getElementById('main__container');
+  let subcontainer = document.getElementById('page__main__container');
+  subcontainer.classList.remove('warehouse__icons__container');
+  subcontainer.classList.add('warehouse__information__container');
+  $('.warehouse__icon').remove();
+
+  let header = document.getElementById('index-header');
+  header.innerHTML="About us".bold();
+  
+  header3 = document.createElement('h3');
+  header3.className="information__header";
+  header3.id="index-header3";
+  header3.innerHTML="This is some useless infomation about the site and the company :).";
+
+  paragraph = document.createElement('p');
+  paragraph.id="index-p";
+  paragraph.innerHTML="paragraph text...";
+
+  subcontainer.appendChild(header3);
+  subcontainer.appendChild(paragraph);
+  container.appendChild(subcontainer);
+}
+
+function contactsPage()
+{
+  let container = document.getElementById('main__container');
+  let subcontainer = document.getElementById('page__main__container');
+  subcontainer.classList.remove('warehouse__icons__container');
+  subcontainer.classList.add('warehouse__information__container');
+  $('.warehouse__icon').remove();
+
+  let header = document.getElementById('index-header');
+  header.innerHTML="Contacts".bold();
+  
+  header3 = document.createElement('h3');
+  header3.className="information__header";
+  header3.id="index-header3";
+  header3.innerHTML="This is some useless infomation about the site and the company :).";
+
+  ul = document.createElement('ul');
+  ul.id="index-ul";
+  ul.innerHTML="<li>Adresses: ...</li><li>Email: ...</li><li>Phone numbers:<ol><li>phone1</li><li>phone2</li><li>phone3</li></ol></li>";
+
+  subcontainer.appendChild(header3);
+  subcontainer.appendChild(ul);
+  container.appendChild(subcontainer);
+}
+    
+// ------------------------------------------------Start of Admin-HOME Functions------------------------------------------------------
 
     
 // ------------------------------------------------Start of Tasks-Table------------------------------------------------------------------------
-  async function LoadTaskTable() 
+async function LoadTaskTable() 
+{
+  function buildHtmlTable(arr)
   {
-    function buildHtmlTable(arr)
-    {
-      let table = _table_.cloneNode(false),
-        thead = _thead_.cloneNode(false),
-        tbody = _tbody_.cloneNode(false),
-        columns = addAllColumnHeaders(arr, table);
-      for (let i = 0, maxi = arr.length; i < maxi; ++i) { //table rows and columns
-        let tr = _tr_.cloneNode(false);
-        for (let j = 0, maxj = columns.length; j < maxj; ++j) {
-          let td = _td_.cloneNode(false);
-          let cellValue = arr[i][columns[j]];
-          if(cellValue !==null &&(j===6 || j===7))
-          {             
-            let date = new Date(toTimestamp(cellValue));
-            cellValue = date.toDateString() + " " + date.toLocaleTimeString();
-          }
-          if (typeof(cellValue) == 'object' && cellValue != null && cellValue.length != 0)
+    let table = _table_.cloneNode(false),
+      thead = _thead_.cloneNode(false),
+      tbody = _tbody_.cloneNode(false),
+      columns = addAllColumnHeaders(arr, table);
+    for (let i = 0, maxi = arr.length; i < maxi; ++i) { //table rows and columns
+      let tr = _tr_.cloneNode(false);
+      for (let j = 0, maxj = columns.length; j < maxj; ++j) {
+        let td = _td_.cloneNode(false);
+        let cellValue = arr[i][columns[j]];
+        if(cellValue !==null &&(j===6 || j===7))
+        {             
+          let date = new Date(toTimestamp(cellValue));
+          cellValue = date.toDateString() + " " + date.toLocaleTimeString();
+        }
+        if (typeof(cellValue) == 'object' && cellValue != null && cellValue.length != 0)
+        {
+          td.className="list__in__table";
+
+          var div0 = _div_.cloneNode(false);
+          div0.className="dropdown";
+          var button = _button_.cloneNode(false);
+          if(j===5)//this means the packets column
           {
-            td.className="list__in__table";
-
-            var div0 = _div_.cloneNode(false);
-            div0.className="dropdown";
-            var button = _button_.cloneNode(false);
-            if(j===5)//this means the packets column
+            button.innerHTML=arr[i][columns[1]] + " packets";
+            button.className="dropbtn";
+            var divMain = _div_.cloneNode(false);
+            divMain.className="dropdown-content";
+            cellValue.forEach(obj => 
             {
-              button.innerHTML=arr[i][columns[1]] + " packets";
-              button.className="dropbtn";
-              var divMain = _div_.cloneNode(false);
-              divMain.className="dropdown-content";
-              cellValue.forEach(obj => 
-              {
-                var div = _div_.cloneNode(false);
-                div.className="side-dropdown-content";
-                var subdiv0 = _div_.cloneNode(false);
-                subdiv0.innerHTML="id: " + obj["id"];
-                div.appendChild(subdiv0);
-                var subdiv1 = _div_.cloneNode(false);
-                subdiv1.innerHTML="weight: " + obj["weight"];
-                div.appendChild(subdiv1);
-                var subdiv2 = _div_.cloneNode(false);
-                subdiv2.innerHTML="warehouse id: " + obj["warehouseId"];
-                div.appendChild(subdiv2);                
+              var div = _div_.cloneNode(false);
+              div.className="side-dropdown-content";
+              var subdiv0 = _div_.cloneNode(false);
+              subdiv0.innerHTML="id: " + obj["id"];
+              div.appendChild(subdiv0);
+              var subdiv1 = _div_.cloneNode(false);
+              subdiv1.innerHTML="weight: " + obj["weight"];
+              div.appendChild(subdiv1);
+              var subdiv2 = _div_.cloneNode(false);
+              subdiv2.innerHTML="warehouse id: " + obj["warehouseId"];
+              div.appendChild(subdiv2);                
 
-                divMain.appendChild(div);
-                var divText = _div_.cloneNode(false);
-                divText.innerHTML=obj["name"];
-                divText.className="divText";
-                divMain.appendChild(divText);
-                var img = _img_.cloneNode(false);
-                img.setAttribute("src", "https://www.svgrepo.com/show/98299/right-arrow.svg");
-                img.className="side-arrow-svg";      
-                let translateY = -25.92; // hard-coded ......
-                let string = "translate(-30px, ".concat(translateY,"px)");
-                img.style.transform = string;
-                divMain.appendChild(img);
-              });
-            }
-            if(j===4)//this means the employees column
-            {
-              button.innerHTML=arr[i][columns[1]] + " employees";
-              button.className="dropbtn";
-              var divMain = _div_.cloneNode(false);
-              divMain.className="dropdown-content";
-              cellValue.forEach(obj => {
-                var div = _div_.cloneNode(false);
-                div.className="side-dropdown-content";
-                var subdiv0 = _div_.cloneNode(false);
-                subdiv0.innerHTML="id: " + obj["id"];
-                div.appendChild(subdiv0);
-                var subdiv1 = _div_.cloneNode(false);
-                subdiv1.innerHTML="email: " + obj["email"];
-                div.appendChild(subdiv1);                          
-
-                divMain.appendChild(div);
-                var divText = _div_.cloneNode(false);
-                divText.innerHTML=obj["fullName"];
-                divText.className="divText";
-                divMain.appendChild(divText);
-                var img = _img_.cloneNode(false);
-                img.setAttribute("src", "https://www.svgrepo.com/show/98299/right-arrow.svg");
-                img.className="side-arrow-svg";      
-                let translateY = -25.92; // hard-coded ......
-                let string = "translate(-30px, ".concat(translateY,"px)");
-                img.style.transform = string;
-                divMain.appendChild(img);
-              });
-            }        
-            div0.appendChild(button);
-            div0.appendChild(divMain);
-            td.appendChild(div0);
+              divMain.appendChild(div);
+              var divText = _div_.cloneNode(false);
+              divText.innerHTML=obj["name"];
+              divText.className="divText";
+              divMain.appendChild(divText);
+              var img = _img_.cloneNode(false);
+              img.setAttribute("src", "https://www.svgrepo.com/show/98299/right-arrow.svg");
+              img.className="side-arrow-svg";      
+              let translateY = -25.92; // hard-coded ......
+              let string = "translate(-30px, ".concat(translateY,"px)");
+              img.style.transform = string;
+              divMain.appendChild(img);
+            });
           }
-          
-          else
-          td.appendChild(document.createTextNode(cellValue || ''));
+          if(j===4)//this means the employees column
+          {
+            button.innerHTML=arr[i][columns[1]] + " employees";
+            button.className="dropbtn";
+            var divMain = _div_.cloneNode(false);
+            divMain.className="dropdown-content";
+            cellValue.forEach(obj => {
+              var div = _div_.cloneNode(false);
+              div.className="side-dropdown-content";
+              var subdiv0 = _div_.cloneNode(false);
+              subdiv0.innerHTML="id: " + obj["id"];
+              div.appendChild(subdiv0);
+              var subdiv1 = _div_.cloneNode(false);
+              subdiv1.innerHTML="email: " + obj["email"];
+              div.appendChild(subdiv1);                          
 
-          tr.appendChild(td);
+              divMain.appendChild(div);
+              var divText = _div_.cloneNode(false);
+              divText.innerHTML=obj["fullName"];
+              divText.className="divText";
+              divMain.appendChild(divText);
+              var img = _img_.cloneNode(false);
+              img.setAttribute("src", "https://www.svgrepo.com/show/98299/right-arrow.svg");
+              img.className="side-arrow-svg";      
+              let translateY = -25.92; // hard-coded ......
+              let string = "translate(-30px, ".concat(translateY,"px)");
+              img.style.transform = string;
+              divMain.appendChild(img);
+            });
+          }        
+          div0.appendChild(button);
+          div0.appendChild(divMain);
+          td.appendChild(div0);
         }
-        table.appendChild(thead);
-        table.appendChild(tbody);
-        tbody.appendChild(tr);
-        table.className="content-table";
-        table.id="my-content-table";
+        
+        else
+        td.appendChild(document.createTextNode(cellValue || ''));
+
+        tr.appendChild(td);
       }
-      return table;
-    }
-    function addAllColumnHeaders(arr, table)  // Table headers
-    {
-      let columnSet = [],
-        tr = _tr_.cloneNode(false),
-        thead = _thead_.cloneNode(false);
-      for (let i = 0, l = arr.length; i < l; i++) {
-        for (let key in arr[i]) {
-          if (arr[i].hasOwnProperty(key) && columnSet.indexOf(key) === -1) {
-            columnSet.push(key);
-            let th = _th_.cloneNode(false);
-            if (key==='fullStatusName')
-            key="status";
-            if (key==='cityName')
-            key="city";
-            if (key==='expectedFinish')
-            key="finish";
-            th.appendChild(document.createTextNode(key));
-            tr.appendChild(th);
-          }
-        }
-      }
-      thead.appendChild(tr);
       table.appendChild(thead);
-      return columnSet;
+      table.appendChild(tbody);
+      tbody.appendChild(tr);
+      table.className="content-table";
+      table.id="my-content-table";
     }
-      let _table_ = document.createElement('table');
-      _thead_ = document.createElement('thead'),
-      _tbody_ = document.createElement('tbody'),
-      _tr_ = document.createElement('tr'),
-      _th_ = document.createElement('th'),
-      _td_ = document.createElement('td');
-      _div_ = document.createElement('div');
-      _button_ = document.createElement('button');
-      _img_ = document.createElement('img');
-      const page__main__container = document.querySelector('#page__main__container');
-
-      const myHeaders = new Headers();
-      myHeaders.append('Authorization', localStorage.getItem('jwtToken'));
-      let json = await fetch('http://localhost:8080/task/fetch',
-      {
-        method: 'GET',
-        headers: myHeaders,
-      })
-      .then(response => response.json())
-      .then((response) => 
-      {
-        //console.log(response);
-        page__main__container.appendChild(buildHtmlTable(response));
-      })
-      .then(response => // Adds event listeners to each button in order to open the submenus.
-      {
-        const dropbtns = document.querySelectorAll('.dropbtn');
-        dropbtns.forEach(dropbtn => dropbtn.addEventListener('click', function ( event ) 
-        {
-          let dropdowns0 = dropbtn.parentElement.childNodes;
-          let dropdowns1 = dropdowns0[1];
-          dropdowns1.classList.toggle("show");
-        }
-        ));
-
-        const sideArrows = document.querySelectorAll('.side-arrow-svg');
-        sideArrows.forEach(sideArrow => sideArrow.addEventListener('mouseover', function ( event ) 
-        {
-          let subdropdowns = document.getElementsByClassName("side-dropdown-content"); //close already opened side-dropdowns
-          let i;
-          for (i = 0; i < subdropdowns.length; i++) 
-          {
-            let openSubDropdown = subdropdowns[i];
-            if (openSubDropdown.classList.contains('show')) {
-              openSubDropdown.classList.remove('show');
-            }
-          }
-
-          let subdropdowns0 = sideArrow.parentElement.childNodes;
-          let parent = sideArrow.parentNode;
-          let indexOfArrow = Array.prototype.indexOf.call(parent.children, sideArrow);
-          let subdropdowns1 = subdropdowns0[indexOfArrow-2];
-          subdropdowns1.classList.toggle("show");
-        }
-        ));
-      });
+    return table;
   }
+  function addAllColumnHeaders(arr, table)  // Table headers
+  {
+    let columnSet = [],
+      tr = _tr_.cloneNode(false),
+      thead = _thead_.cloneNode(false);
+    for (let i = 0, l = arr.length; i < l; i++) {
+      for (let key in arr[i]) {
+        if (arr[i].hasOwnProperty(key) && columnSet.indexOf(key) === -1) {
+          columnSet.push(key);
+          let th = _th_.cloneNode(false);
+          if (key==='fullStatusName')
+          key="status";
+          if (key==='cityName')
+          key="city";
+          if (key==='expectedFinish')
+          key="finish";
+          th.appendChild(document.createTextNode(key));
+          tr.appendChild(th);
+        }
+      }
+    }
+    thead.appendChild(tr);
+    table.appendChild(thead);
+    return columnSet;
+  }
+    let _table_ = document.createElement('table');
+    _thead_ = document.createElement('thead'),
+    _tbody_ = document.createElement('tbody'),
+    _tr_ = document.createElement('tr'),
+    _th_ = document.createElement('th'),
+    _td_ = document.createElement('td');
+    _div_ = document.createElement('div');
+    _button_ = document.createElement('button');
+    _img_ = document.createElement('img');
+    const page__main__container = document.querySelector('#page__main__container');
+
+    const myHeaders = new Headers();
+    myHeaders.append('Authorization', localStorage.getItem('jwtToken'));
+    let json = await fetch('http://localhost:8080/task/fetch',
+    {
+      method: 'GET',
+      headers: myHeaders,
+    })
+    .then(response => response.json())
+    .then((response) => 
+    {
+      //console.log(response);
+      page__main__container.appendChild(buildHtmlTable(response));
+    })
+    .then(response => // Adds event listeners to each button in order to open the submenus.
+    {
+      const dropbtns = document.querySelectorAll('.dropbtn');
+      dropbtns.forEach(dropbtn => dropbtn.addEventListener('click', function ( event ) 
+      {
+        let dropdowns0 = dropbtn.parentElement.childNodes;
+        let dropdowns1 = dropdowns0[1];
+        dropdowns1.classList.toggle("show");
+      }
+      ));
+
+      const sideArrows = document.querySelectorAll('.side-arrow-svg');
+      sideArrows.forEach(sideArrow => sideArrow.addEventListener('mouseover', function ( event ) 
+      {
+        let subdropdowns = document.getElementsByClassName("side-dropdown-content"); //close already opened side-dropdowns
+        let i;
+        for (i = 0; i < subdropdowns.length; i++) 
+        {
+          let openSubDropdown = subdropdowns[i];
+          if (openSubDropdown.classList.contains('show')) {
+            openSubDropdown.classList.remove('show');
+          }
+        }
+
+        let subdropdowns0 = sideArrow.parentElement.childNodes;
+        let parent = sideArrow.parentNode;
+        let indexOfArrow = Array.prototype.indexOf.call(parent.children, sideArrow);
+        let subdropdowns1 = subdropdowns0[indexOfArrow-2];
+        subdropdowns1.classList.toggle("show");
+      }
+      ));
+    });
+}
 // Close the dropdown menu if the user clicks outside of it.                             -------------- Works for future Tables also -----------------
 window.addEventListener('mouseover', function ( event ) 
 {
@@ -441,17 +641,40 @@ window.addEventListener('mouseover', function ( event )
 function reLoadTaskTable()
 {
   $('#my-content-table').remove();
+  $('.warehouse__icon').remove();
+  $('#page__main__container').removeClass('warehouse__icons__container');
+  $('#page__main__container').addClass('page__information');
   LoadTaskTable();
 }
 function reLoadPacketTable()
 {
   $('#my-content-table').remove();
+  $('.warehouse__icon').remove();
+  $('#page__main__container').removeClass('warehouse__icons__container');
+  $('#page__main__container').addClass('page__information');
   LoadPacketTable();
 }
 function reLoadEmployeeTable()
 {
   $('#my-content-table').remove();
+  $('.warehouse__icon').remove();
+  $('#page__main__container').removeClass('warehouse__icons__container');
+  $('#page__main__container').addClass('page__information');
   LoadEmployeeTable();
+}
+function reLoadWarehousesTable()
+{
+  $('#my-content-table').remove();
+  $('.warehouse__icon').remove();
+  $('#page__main__container').removeClass('page__information');
+  $('#page__main__container').addClass('warehouse__icons__container');
+
+  $('#page__main__container').css('margin', '10px');
+  $('#page__main__container').css('margin-top', '60px');
+  $('#page__main__container').css('margin-bottom', '60px');
+  $('#page__main__container').css('height', '827px');
+  $('#page__main__container').css('width', '100%');
+  fetchWarehousesWithId();
 }
 
 window.addEventListener("load", () => {
@@ -509,6 +732,26 @@ window.addEventListener("load", () => {
   {
     document.querySelector("#employee_table_a").addEventListener("click", e => {
       reLoadEmployeeTable();
+  });
+  } 
+});
+
+window.addEventListener("load", () => {
+  let element = document.querySelector("#warehouse_table_icon");
+  if(typeof(element) != 'undefined' && element != null)
+  {
+    document.querySelector("#warehouse_table_icon").addEventListener("click", e => {  
+      reLoadWarehousesTable();
+  });
+  } 
+});
+
+window.addEventListener("load", () => {
+  let element = document.querySelector("#warehouse_table_a");
+  if(typeof(element) != 'undefined' && element != null)
+  {
+    document.querySelector("#warehouse_table_a").addEventListener("click", e => {
+      reLoadWarehousesTable();
   });
   } 
 });
@@ -1108,7 +1351,7 @@ async function LoadEmployeeTable()
         let cellValue = arr[i][columns[j]];
         if (cellValue == '')
         cellValue = 'inactive';
-        if (cellValue == "1")
+        if (cellValue == "1" && j==4)
         cellValue = 'active';
         if (cellValue == 'ROLE_ADMIN')
         cellValue = 'admin';
@@ -1238,6 +1481,7 @@ function addWarehouse()
   {
     if(request.responseText.includes("Warehouse added successfully"))
     {
+      reLoadWarehousesTable();
       if(!document.querySelector('#alert5').classList.contains("alert-success"))
       {
         document.querySelector('#alert5').classList.toggle("alert-success");
