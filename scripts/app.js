@@ -406,7 +406,7 @@ function contactsPage()
   header3 = document.createElement('h3');
   header3.className="information__header";
   header3.id="index-header3";
-  header3.innerHTML="This is some useless infomation about the site and the company :).";
+  header3.innerHTML="You can find us at:";
 
   ul = document.createElement('ul');
   ul.id="index-ul";
