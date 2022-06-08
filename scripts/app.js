@@ -370,6 +370,8 @@ function aboutPage()
   subcontainer.classList.remove('warehouse__icons__container');
   subcontainer.classList.add('warehouse__information__container');
   $('.warehouse__icon').remove();
+  $('#index-header3').remove();
+  $('#index-ul').remove();
 
   let header = document.getElementById('index-header');
   header.innerHTML="About us".bold();
@@ -395,6 +397,8 @@ function contactsPage()
   subcontainer.classList.remove('warehouse__icons__container');
   subcontainer.classList.add('warehouse__information__container');
   $('.warehouse__icon').remove();
+  $('#index-header3').remove();
+  $('#index-p').remove();
 
   let header = document.getElementById('index-header');
   header.innerHTML="Contacts".bold();
