@@ -131,7 +131,7 @@ h2{
     padding: 30px 30px;
     display: flex;
     flex-direction: column;
-    color: white;
+    /* color: white; */
 }
 .information__header{
     color: white;

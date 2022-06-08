@@ -59,6 +59,7 @@ jQuery( "li:has(ul)" ).hover(function()
 }); // then toggle (add/remove) the class 'active' on it. 
 
 function logout() {
+  localStorage.clear();
   localStorage.setItem('jwtToken', 'null');
   window.location.href = 'https://de221.github.io/DNDWarehouse-Frontend/';
 }
@@ -383,6 +384,7 @@ function aboutPage()
 
   paragraph = document.createElement('p');
   paragraph.id="index-p";
+  paragraph.style.color="white";
   paragraph.innerHTML="paragraph text...";
 
   subcontainer.appendChild(header3);
@@ -410,6 +412,7 @@ function contactsPage()
 
   ul = document.createElement('ul');
   ul.id="index-ul";
+  ul.style.color="white";
   ul.innerHTML="<li>Adresses: ...</li><li>Email: ...</li><li>Phone numbers:<ol><li>phone1</li><li>phone2</li><li>phone3</li></ol></li>";
 
   subcontainer.appendChild(header3);
@@ -1566,3 +1569,122 @@ function addCity()
 // ------------------------------------------------End of browse warehouses functions--------------------------------------------------------
 
 // ------------------------------------------------End of Admin-HOME Functions------------------------------------------------------
+
+
+
+// ------------------------------------------------Start of User-HOME Functions------------------------------------------------------
+
+window.addEventListener("load", () => {
+  let element = document.querySelector("#myTasks");
+  if(typeof(element) != 'undefined' && element != null)
+  {
+    document.querySelector("#myTasks").addEventListener("click", e => {
+      myTasksPage();
+  });
+  } 
+});
+
+window.addEventListener("load", () => {
+  let element = document.querySelector("#myHistory");
+  if(typeof(element) != 'undefined' && element != null)
+  {
+    document.querySelector("#myHistory").addEventListener("click", e => {
+      myHistoryPage();
+  });
+  } 
+});
+
+function myTasksPage()
+{
+  $('#my-content-table').remove();
+  LoadMyTasksTable();
+}
+function myHistoryPage()
+{
+
+}
+
+async function LoadMyTasksTable()
+{
+  function buildHtmlTablePackets(arr)
+  {
+    let table = _table_.cloneNode(false),
+      thead = _thead_.cloneNode(false),
+      tbody = _tbody_.cloneNode(false),
+      columns = addAllColumnHeaders(arr, table);
+    for (let i = 0, maxi = arr.length; i < maxi; ++i) 
+    { //table rows and columns
+      let tr = _tr_.cloneNode(false);
+      for (let j = 0, maxj = columns.length; j < maxj; ++j) 
+      {
+        let td = _td_.cloneNode(false);
+        let cellValue = arr[i][columns[j]];
+        
+         td.appendChild(document.createTextNode(cellValue || ''));
+
+         tr.appendChild(td);
+      }
+      table.appendChild(thead);
+      table.appendChild(tbody);
+      tbody.appendChild(tr);
+      table.className="content-table";
+      table.id="my-content-table";
+    }
+    return table;
+  };
+  function addAllColumnHeaders(arr, table)  // Table headers
+  {
+    let columnSet = [],
+      tr = _tr_.cloneNode(false),
+      thead = _thead_.cloneNode(false);
+    for (let i = 0, l = arr.length; i < l; i++) {
+      for (let key in arr[i]) {
+        if (arr[i].hasOwnProperty(key) && columnSet.indexOf(key) === -1) {
+          columnSet.push(key);
+          let th = _th_.cloneNode(false);
+          // if (key==='fullStatusName')
+          // key="status";
+          // if (key==='cityName')
+          // key="city";
+          // if (key==='expectedFinish')
+          // key="finish";
+          th.appendChild(document.createTextNode(key));
+          tr.appendChild(th);
+        }
+      }
+    }
+    thead.appendChild(tr);
+    table.appendChild(thead);
+    return columnSet;
+  }
+    let _table_ = document.createElement('table');
+    _thead_ = document.createElement('thead'),
+    _tbody_ = document.createElement('tbody'),
+    _tr_ = document.createElement('tr'),
+    _th_ = document.createElement('th'),
+    _td_ = document.createElement('td');
+    _div_ = document.createElement('div');
+    _button_ = document.createElement('button');
+    _img_ = document.createElement('img');
+    const page__main__container = document.querySelector('#page__main__container');
+
+    const myHeaders = new Headers();
+    myHeaders.append('Authorization', localStorage.getItem('jwtToken'));
+    let params = 'email=' + localStorage.getItem('email');
+    let json = await fetch('http://localhost:8080/task/getEmployeeTasks?' + params,
+    {
+      method: 'GET',
+      headers: myHeaders,
+    })
+    .then(response => response.json())
+    .then((response) => 
+    {
+      //console.log(response);
+      page__main__container.appendChild(buildHtmlTablePackets(response));
+    })
+    .then(response => // Adds event listeners to each button in order to open the submenus.
+    {
+      
+    });
+}
+// ------------------------------------------------End of User-HOME Functions------------------------------------------------------
