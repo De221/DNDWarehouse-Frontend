@@ -647,6 +647,7 @@ window.addEventListener('mouseover', function ( event )
 
 function reLoadTaskTable()
 {
+  $('#index-header3').remove();
   $('#my-content-table').remove();
   $('.warehouse__icon').remove();
   $('#page__main__container').removeClass('warehouse__icons__container');
@@ -655,6 +656,7 @@ function reLoadTaskTable()
 }
 function reLoadPacketTable()
 {
+  $('#index-header3').remove();
   $('#my-content-table').remove();
   $('.warehouse__icon').remove();
   $('#page__main__container').removeClass('warehouse__icons__container');
@@ -663,6 +665,7 @@ function reLoadPacketTable()
 }
 function reLoadEmployeeTable()
 {
+  $('#index-header3').remove();
   $('#my-content-table').remove();
   $('.warehouse__icon').remove();
   $('#page__main__container').removeClass('warehouse__icons__container');
@@ -671,6 +674,7 @@ function reLoadEmployeeTable()
 }
 function reLoadWarehousesTable()
 {
+  $('#index-header3').remove();
   $('#my-content-table').remove();
   $('.warehouse__icon').remove();
   $('#page__main__container').removeClass('page__information');
@@ -1574,6 +1578,16 @@ function addCity()
 
 // ------------------------------------------------Start of User-HOME Functions------------------------------------------------------
 
+function welcomeHeader()
+{
+  let container = document.querySelector('#page__main__container');
+  let h3 = document.createElement('h3');
+  h3.className="information__header";
+  h3.id="index-header3";
+  h3.innerHTML="Welcome, " + localStorage.getItem('fullName') + "!";
+  container.appendChild(h3);
+}
+
 window.addEventListener("load", () => {
   let element = document.querySelector("#myTasks");
   if(typeof(element) != 'undefined' && element != null)
@@ -1594,14 +1608,59 @@ window.addEventListener("load", () => {
   } 
 });
 
+window.addEventListener("load", () => {
+  let element = document.querySelector("#myPayment-bonus");
+  if(typeof(element) != 'undefined' && element != null)
+  {
+    document.querySelector("#myPayment-bonus").addEventListener("click", e => {
+      myBonusPaymentPage();
+  });
+  } 
+});
+
 function myTasksPage()
 {
-  $('#my-content-table').remove();
+  $('#index-header3').remove();
+  if(document.querySelector('#my-content-table') != null)
+  {
+    $('#my-content-table').remove();
+  }
+  else
+  {
+    $('table').remove();
+  }
   LoadMyTasksTable();
 }
 function myHistoryPage()
 {
-
+  $('#index-header3').remove();
+  if(document.querySelector('#my-content-table') != null)
+  {
+    $('#my-content-table').remove();
+  }
+  else
+  {
+    $('table').remove();
+  }
+  LoadMyHistoryTable()
+}
+function myBonusPaymentPage()
+{
+  $('#index-header3').remove();
+  if(document.querySelector('#my-content-table') != null)
+  {
+    $('#my-content-table').remove();
+  }
+  else
+  {
+    $('table').remove();
+  }
+  let container = document.querySelector('#page__main__container');
+  let h3 = document.createElement('h3');
+  h3.className="information__header";
+  h3.id="index-header3";
+  h3.innerHTML="This feature will be implemented in near future.";
+  container.appendChild(h3);
 }
 
 async function LoadMyTasksTable()
@@ -1616,13 +1675,63 @@ async function LoadMyTasksTable()
     { //table rows and columns
       let tr = _tr_.cloneNode(false);
       for (let j = 0, maxj = columns.length; j < maxj; ++j) 
-      {
+      {     
         let td = _td_.cloneNode(false);
         let cellValue = arr[i][columns[j]];
-        
-         td.appendChild(document.createTextNode(cellValue || ''));
+        if(cellValue !==null &&(j===5 || j===6))
+        {             
+          let date = new Date(toTimestamp(cellValue));
+          cellValue = date.toDateString() + " " + date.toLocaleTimeString();
+        }
+        if (typeof(cellValue) == 'object' && cellValue != null && cellValue.length != 0)
+        {
+          td.className="list__in__table";
 
-         tr.appendChild(td);
+          var div0 = _div_.cloneNode(false);
+          div0.className="dropdown";
+          var button = _button_.cloneNode(false);
+          if(j===4)//this means the packets column
+          {
+            button.innerHTML=arr[i][columns[1]] + " packets";
+            button.className="dropbtn";
+            var divMain = _div_.cloneNode(false);
+            divMain.className="dropdown-content";
+            cellValue.forEach(obj => 
+            {
+              var div = _div_.cloneNode(false);
+              div.className="side-dropdown-content";
+              var subdiv0 = _div_.cloneNode(false);
+              subdiv0.innerHTML="id: " + obj["id"];
+              div.appendChild(subdiv0);
+              var subdiv1 = _div_.cloneNode(false);
+              subdiv1.innerHTML="weight: " + obj["weight"];
+              div.appendChild(subdiv1);
+              var subdiv2 = _div_.cloneNode(false);
+              subdiv2.innerHTML="warehouse id: " + obj["warehouseId"];
+              div.appendChild(subdiv2);                
+
+              divMain.appendChild(div);
+              var divText = _div_.cloneNode(false);
+              divText.innerHTML=obj["name"];
+              divText.className="divText";
+              divMain.appendChild(divText);
+              var img = _img_.cloneNode(false);
+              img.setAttribute("src", "https://www.svgrepo.com/show/98299/right-arrow.svg");
+              img.className="side-arrow-svg";      
+              let translateY = -25.92; // hard-coded ......
+              let string = "translate(-30px, ".concat(translateY,"px)");
+              img.style.transform = string;
+              divMain.appendChild(img);
+            });
+          }        
+          div0.appendChild(button);
+          div0.appendChild(divMain);
+          td.appendChild(div0);
+        }        
+        else
+        td.appendChild(document.createTextNode(cellValue || ''));
+
+        tr.appendChild(td);
       }
       table.appendChild(thead);
       table.appendChild(tbody);
@@ -1639,15 +1748,15 @@ async function LoadMyTasksTable()
       thead = _thead_.cloneNode(false);
     for (let i = 0, l = arr.length; i < l; i++) {
       for (let key in arr[i]) {
-        if (arr[i].hasOwnProperty(key) && columnSet.indexOf(key) === -1) {
+        if (arr[i].hasOwnProperty(key) && columnSet.indexOf(key) === -1 && key != 'employees') {
           columnSet.push(key);
           let th = _th_.cloneNode(false);
-          // if (key==='fullStatusName')
-          // key="status";
-          // if (key==='cityName')
-          // key="city";
-          // if (key==='expectedFinish')
-          // key="finish";
+          if (key==='fullStatusName')
+          key="status";
+          if (key==='cityName')
+          key="city";
+          if (key==='expectedFinish')
+          key="finish";
           th.appendChild(document.createTextNode(key));
           tr.appendChild(th);
         }
@@ -1684,7 +1793,218 @@ async function LoadMyTasksTable()
     })
     .then(response => // Adds event listeners to each button in order to open the submenus.
     {
-      
+      if(document.querySelector('#my-content-table') == null)
+        {
+          let container = document.querySelector('#page__main__container');
+          let h3 = document.createElement('h3');
+          h3.className="information__header";
+          h3.id="index-header3";
+          h3.innerHTML="You don't have any tasks today. Enjoy your time:)";
+          container.appendChild(h3);
+        }
+
+      const dropbtns = document.querySelectorAll('.dropbtn');
+      dropbtns.forEach(dropbtn => dropbtn.addEventListener('click', function ( event ) 
+      {
+        let dropdowns0 = dropbtn.parentElement.childNodes;
+        let dropdowns1 = dropdowns0[1];
+        dropdowns1.classList.toggle("show");
+      }
+      ));
+
+      const sideArrows = document.querySelectorAll('.side-arrow-svg');
+      sideArrows.forEach(sideArrow => sideArrow.addEventListener('mouseover', function ( event ) 
+      {
+        let subdropdowns = document.getElementsByClassName("side-dropdown-content"); //close already opened side-dropdowns
+        let i;
+        for (i = 0; i < subdropdowns.length; i++) 
+        {
+          let openSubDropdown = subdropdowns[i];
+          if (openSubDropdown.classList.contains('show')) {
+            openSubDropdown.classList.remove('show');
+          }
+        }
+
+        let subdropdowns0 = sideArrow.parentElement.childNodes;
+        let parent = sideArrow.parentNode;
+        let indexOfArrow = Array.prototype.indexOf.call(parent.children, sideArrow);
+        let subdropdowns1 = subdropdowns0[indexOfArrow-2];
+        subdropdowns1.classList.toggle("show");
+      }
+      ));
+    });
+}
+
+async function LoadMyHistoryTable()
+{
+  function buildHtmlTablePackets(arr)
+  {
+    let table = _table_.cloneNode(false),
+      thead = _thead_.cloneNode(false),
+      tbody = _tbody_.cloneNode(false),
+      columns = addAllColumnHeaders(arr, table);
+    for (let i = 0, maxi = arr.length; i < maxi; ++i) 
+    { //table rows and columns
+      let tr = _tr_.cloneNode(false);
+      for (let j = 0, maxj = columns.length; j < maxj; ++j) 
+      {     
+        let td = _td_.cloneNode(false);
+        let cellValue = arr[i][columns[j]];
+        if(cellValue !==null &&(j===5 || j===6))
+        {             
+          let date = new Date(toTimestamp(cellValue));
+          cellValue = date.toDateString() + " " + date.toLocaleTimeString();
+        }
+        if (typeof(cellValue) == 'object' && cellValue != null && cellValue.length != 0)
+        {
+          td.className="list__in__table";
+
+          var div0 = _div_.cloneNode(false);
+          div0.className="dropdown";
+          var button = _button_.cloneNode(false);
+          if(j===4)//this means the packets column
+          {
+            button.innerHTML=arr[i][columns[1]] + " packets";
+            button.className="dropbtn";
+            var divMain = _div_.cloneNode(false);
+            divMain.className="dropdown-content";
+            cellValue.forEach(obj => 
+            {
+              var div = _div_.cloneNode(false);
+              div.className="side-dropdown-content";
+              var subdiv0 = _div_.cloneNode(false);
+              subdiv0.innerHTML="id: " + obj["id"];
+              div.appendChild(subdiv0);
+              var subdiv1 = _div_.cloneNode(false);
+              subdiv1.innerHTML="weight: " + obj["weight"];
+              div.appendChild(subdiv1);
+              var subdiv2 = _div_.cloneNode(false);
+              subdiv2.innerHTML="warehouse id: " + obj["warehouseId"];
+              div.appendChild(subdiv2);                
+
+              divMain.appendChild(div);
+              var divText = _div_.cloneNode(false);
+              divText.innerHTML=obj["name"];
+              divText.className="divText";
+              divMain.appendChild(divText);
+              var img = _img_.cloneNode(false);
+              img.setAttribute("src", "https://www.svgrepo.com/show/98299/right-arrow.svg");
+              img.className="side-arrow-svg";      
+              let translateY = -25.92; // hard-coded ......
+              let string = "translate(-30px, ".concat(translateY,"px)");
+              img.style.transform = string;
+              divMain.appendChild(img);
+            });
+          }        
+          div0.appendChild(button);
+          div0.appendChild(divMain);
+          td.appendChild(div0);
+        }        
+        else
+        td.appendChild(document.createTextNode(cellValue || ''));
+
+        tr.appendChild(td);
+      }
+      table.appendChild(thead);
+      table.appendChild(tbody);
+      tbody.appendChild(tr);
+      table.className="content-table";
+      table.id="my-content-table";
+    }
+    return table;
+  };
+  function addAllColumnHeaders(arr, table)  // Table headers
+  {
+    let columnSet = [],
+      tr = _tr_.cloneNode(false),
+      thead = _thead_.cloneNode(false);
+    for (let i = 0, l = arr.length; i < l; i++) {
+      for (let key in arr[i]) {
+        if (arr[i].hasOwnProperty(key) && columnSet.indexOf(key) === -1 && key != 'employees') {
+          columnSet.push(key);
+          let th = _th_.cloneNode(false);
+          if (key==='fullStatusName')
+          key="status";
+          if (key==='cityName')
+          key="city";
+          if (key==='expectedFinish')
+          key="finish";
+          th.appendChild(document.createTextNode(key));
+          tr.appendChild(th);
+        }
+      }
+    }
+    thead.appendChild(tr);
+    table.appendChild(thead);
+    return columnSet;
+  }
+    let _table_ = document.createElement('table');
+    _thead_ = document.createElement('thead'),
+    _tbody_ = document.createElement('tbody'),
+    _tr_ = document.createElement('tr'),
+    _th_ = document.createElement('th'),
+    _td_ = document.createElement('td');
+    _div_ = document.createElement('div');
+    _button_ = document.createElement('button');
+    _img_ = document.createElement('img');
+    const page__main__container = document.querySelector('#page__main__container');
+
+    const myHeaders = new Headers();
+    myHeaders.append('Authorization', localStorage.getItem('jwtToken'));
+    let params = 'email=' + localStorage.getItem('email');
+    let json = await fetch('http://localhost:8080/task/getEmployeeFinishedTasks?' + params,
+    {
+      method: 'GET',
+      headers: myHeaders,
+    })
+    .then(response => response.json())
+    .then((response) => 
+    {
+      //console.log(response);
+      page__main__container.appendChild(buildHtmlTablePackets(response));
+    })
+    .then(response => // Adds event listeners to each button in order to open the submenus.
+    {
+      if(document.querySelector('#my-content-table') == null)
+        {
+          let container = document.querySelector('#page__main__container');
+          let h3 = document.createElement('h3');
+          h3.className="information__header";
+          h3.id="index-header3";
+          h3.innerHTML="You haven't completed any tasks yet.";
+          container.appendChild(h3);
+        }
+
+      const dropbtns = document.querySelectorAll('.dropbtn');
+      dropbtns.forEach(dropbtn => dropbtn.addEventListener('click', function ( event ) 
+      {
+        let dropdowns0 = dropbtn.parentElement.childNodes;
+        let dropdowns1 = dropdowns0[1];
+        dropdowns1.classList.toggle("show");
+      }
+      ));
+
+      const sideArrows = document.querySelectorAll('.side-arrow-svg');
+      sideArrows.forEach(sideArrow => sideArrow.addEventListener('mouseover', function ( event ) 
+      {
+        let subdropdowns = document.getElementsByClassName("side-dropdown-content"); //close already opened side-dropdowns
+        let i;
+        for (i = 0; i < subdropdowns.length; i++) 
+        {
+          let openSubDropdown = subdropdowns[i];
+          if (openSubDropdown.classList.contains('show')) {
+            openSubDropdown.classList.remove('show');
+          }
+        }
+
+        let subdropdowns0 = sideArrow.parentElement.childNodes;
+        let parent = sideArrow.parentNode;
+        let indexOfArrow = Array.prototype.indexOf.call(parent.children, sideArrow);
+        let subdropdowns1 = subdropdowns0[indexOfArrow-2];
+        subdropdowns1.classList.toggle("show");
+        
+      }
+      ));
     });
 }
 // ------------------------------------------------End of User-HOME Functions------------------------------------------------------
