@@ -520,7 +520,6 @@ async function LoadTaskTable()
         
         else
         td.appendChild(document.createTextNode(cellValue || ''));
-
         tr.appendChild(td);
       }
       table.appendChild(thead);
@@ -641,6 +640,64 @@ window.addEventListener('mouseover', function ( event )
     }
   }
 });
+//----------------------------------------------------------------------------Start of change employee profile-----------------------------------------------------------------------
+window.addEventListener("load", () => {
+  let element = document.querySelector("#change-emp-profile");
+  if(typeof(element) != 'undefined' && element != null)
+  {
+    document.querySelector("#change-emp-profile").addEventListener("click", e => {  
+      getEntryDataFromTable();
+  });
+  } 
+});
+
+let clickCounter = 0;
+
+function getEntryDataFromTable()
+{
+  let values = [];
+  let clickEvent = function(event) {
+    if(event.target.className.startsWith("id-td-"))
+    {
+      document.querySelectorAll('tr').forEach(element => element.removeAttribute('id'));
+      let positionI_0 = event.target.className;
+      let positionI = positionI_0.replace("id-td-", '')
+      event.target.parentElement.id="selected-tr";
+      clickCounter++;
+      if(clickCounter === 1)
+      {
+        $(document).unbind('click', clickEvent);
+        clickCounter = 0;
+      }
+      ///
+      let children = Array.from(document.getElementById('selected-tr').children);
+      children.forEach(element => values.push(element.innerHTML));
+      console.log(values);
+
+      let index0 = values.indexOf('active');
+      if (index0 !== -1) // returns -1 if value was not found in the array
+      values[index0] = '1';
+      let index1 = values.indexOf('inactive');
+      if (index1 !== -1)
+      values[index1] = '';
+      let index2 = values.indexOf('admin');
+      if (index2 !== -1)
+      values[index2] = 'ROLE_ADMIN';
+      let index3 = values.indexOf('user');
+      if (index3 !== -1)
+      values[index3] = 'ROLE_USER';
+
+      console.log(values);
+    }
+  };
+  $(document).on(
+    {
+    click: clickEvent         
+    }, $(document));
+}
+//----------------------------------------------------------------------------End of change employee profile-----------------------------------------------------------------------
+
+
 // ------------------------------------------------End of Tasks-Table------------------------------------------------------------------------
 
 // ------------------------------------------------Start of Panel for Table calls------------------------------------------------------
@@ -1370,6 +1427,9 @@ async function LoadEmployeeTable()
         cellValue = 'user';
         
         td.appendChild(document.createTextNode(cellValue || ''));
+
+        if(j === 0)
+        td.className="id-td-" + i;
 
         tr.appendChild(td);
       }
