@@ -645,15 +645,16 @@ window.addEventListener("load", () => {
   let element = document.querySelector("#change-emp-profile");
   if(typeof(element) != 'undefined' && element != null)
   {
-    document.querySelector("#change-emp-profile").addEventListener("click", e => {  
-      getEntryDataFromTable();
+    document.querySelector("#change-emp-profile").addEventListener("click", e => {
+      reLoadEmployeeTable();
+      changeEmployeeProfile();
   });
   } 
 });
 
 let clickCounter = 0;
 
-function getEntryDataFromTable()
+function changeEmployeeProfile()
 {
   let values = [];
   let clickEvent = function(event) {
@@ -669,10 +670,9 @@ function getEntryDataFromTable()
         $(document).unbind('click', clickEvent);
         clickCounter = 0;
       }
-      ///
       let children = Array.from(document.getElementById('selected-tr').children);
       children.forEach(element => values.push(element.innerHTML));
-      console.log(values);
+      //console.log(children);
 
       let index0 = values.indexOf('active');
       if (index0 !== -1) // returns -1 if value was not found in the array
@@ -687,7 +687,47 @@ function getEntryDataFromTable()
       if (index3 !== -1)
       values[index3] = 'ROLE_USER';
 
-      console.log(values);
+      //console.log(values); // oldValues
+
+      let select0 = document.createElement('select');
+      select0.id="select-acc-status";
+      let option0 = document.createElement('option');
+      option0.innerHTML = "active";
+      let option1 = document.createElement('option');
+      option1.innerHTML = "inactive";
+
+      select0.appendChild(option0);
+      select0.appendChild(option1);
+      children[4].innerHTML = '';
+      children[4].appendChild(select0)
+
+      let select1 = document.createElement('select');
+      select1.id="select-role";
+      let option2 = document.createElement('option');
+      option2.innerHTML = "user";
+      let option3 = document.createElement('option');
+      option3.innerHTML = "admin";
+
+      select1.appendChild(option2);
+      select1.appendChild(option3);
+      children[5].innerHTML = '';
+      children[5].appendChild(select1)
+
+      let select3 = document.createElement('select');
+      select3.id="selectCity";
+      children[3].innerHTML = '';
+      children[3].appendChild(select3)
+      loadCityOptions();
+
+      let input0 = document.createElement('input');
+      input0.id="input0";
+      children[1].innerHTML = '';
+      children[1].appendChild(input0);
+
+      let input1 = document.createElement('input');
+      input1.id="input1";
+      children[2].innerHTML = '';
+      children[2].appendChild(input1);
     }
   };
   $(document).on(
