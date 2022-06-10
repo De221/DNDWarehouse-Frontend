@@ -645,89 +645,307 @@ window.addEventListener("load", () => {
   let element = document.querySelector("#change-emp-profile");
   if(typeof(element) != 'undefined' && element != null)
   {
-    document.querySelector("#change-emp-profile").addEventListener("click", e => {
-      reLoadEmployeeTable();
+    document.querySelector("#change-emp-profile").addEventListener("click", e => 
+    {
+      reLoadEmployeeTableWithGreenIds();
       changeEmployeeProfile();
-  });
+    });
   } 
 });
+function makeIdsGreen()
+{
+  let allTds = document.querySelectorAll('td')
+  allTds.forEach(function(element) 
+    {
+      if(element.className.startsWith("id-td-"))
+      {
+        element.style.textDecoration="underline";
+        element.style.color="forestgreen";
+        element.style.cursor="pointer";
+      }
+    });
+}
+async function reLoadEmployeeTableWithGreenIds()
+{
+  $('#my-content-table').remove();
+  $('#index-header3').remove();
+  function buildHtmlTablePackets(arr)
+  {
+    let table = _table_.cloneNode(false),
+      thead = _thead_.cloneNode(false),
+      tbody = _tbody_.cloneNode(false),
+      columns = addAllColumnHeaders(arr, table);
+    for (let i = 0, maxi = arr.length; i < maxi; ++i) 
+    { //table rows and columns
+      let tr = _tr_.cloneNode(false);
+      for (let j = 0, maxj = columns.length; j < maxj; ++j) 
+      {
+        let td = _td_.cloneNode(false);
+        let cellValue = arr[i][columns[j]];
+        if (cellValue == '')
+        cellValue = 'inactive';
+        if (cellValue == "1" && j==4)
+        cellValue = 'active';
+        if (cellValue == 'ROLE_ADMIN')
+        cellValue = 'admin';
+        if (cellValue == 'ROLE_USER')
+        cellValue = 'user';
+        
+        td.appendChild(document.createTextNode(cellValue || ''));
 
-let clickCounter = 0;
+        if(j === 0)
+        td.className="id-td-" + i;
+
+        tr.appendChild(td);
+      }
+      table.appendChild(thead);
+      table.appendChild(tbody);
+      tbody.appendChild(tr);
+      table.className="content-table";
+      table.id="my-content-table";
+    }
+    return table;
+  };
+  function addAllColumnHeaders(arr, table)  // Table headers
+  {
+    let columnSet = [],
+      tr = _tr_.cloneNode(false),
+      thead = _thead_.cloneNode(false);
+    for (let i = 0, l = arr.length; i < l; i++) {
+      for (let key in arr[i]) {
+        if (arr[i].hasOwnProperty(key) && columnSet.indexOf(key) === -1) {
+          columnSet.push(key);
+          let th = _th_.cloneNode(false);
+           if (key==='fullName')
+           key="name";
+           if (key==='cityName')
+           key="city";
+           if (key==='roles')
+           key="role";
+           if (key==='active')
+           key="account status";
+          th.appendChild(document.createTextNode(key));
+          tr.appendChild(th);
+        }
+      }
+    }
+    thead.appendChild(tr);
+    table.appendChild(thead);
+    return columnSet;
+  }
+    let _table_ = document.createElement('table');
+    _thead_ = document.createElement('thead'),
+    _tbody_ = document.createElement('tbody'),
+    _tr_ = document.createElement('tr'),
+    _th_ = document.createElement('th'),
+    _td_ = document.createElement('td');
+    _div_ = document.createElement('div');
+    _button_ = document.createElement('button');
+    _img_ = document.createElement('img');
+    const page__main__container = document.querySelector('#page__main__container');
+
+    const myHeaders = new Headers();
+    myHeaders.append('Authorization', localStorage.getItem('jwtToken'));
+    let json = await fetch('http://localhost:8080/employee/fetch',
+    {
+      method: 'GET',
+      headers: myHeaders,
+    })
+    .then(response => response.json())
+    .then((response) => 
+    {
+      page__main__container.appendChild(buildHtmlTablePackets(response));
+    })
+    .then((response) =>
+    {
+      makeIdsGreen();
+    })
+}
+async function loadCityOptionsWithChosenOne(city)
+{
+  $('.dropdown-options').remove();
+  await fetch('http://localhost:8080/employee/fetchCity',
+    {
+      method: 'GET',
+    })
+    .then(response => response.json())
+    .then((response) =>
+    {  
+      var indexOfSelectedCity;  
+      let counter = 0;
+      for (let item of response) 
+      {
+        counter++;
+        let option = document.createElement('option');
+        option.className="dropdown-options"
+        option.innerHTML=item['name'];
+        document.querySelector('#selectCity').appendChild(option);
+        if(item['name'] == city)
+        {
+          indexOfSelectedCity = counter;
+        }
+      } 
+      document.querySelector('#selectCity').selectedIndex = indexOfSelectedCity - 1;   
+    });
+}
 
 function changeEmployeeProfile()
 {
+  let clickCounter = 0;
   let values = [];
+  var accStatus, role, city, name, email;
   let clickEvent = function(event) {
     if(event.target.className.startsWith("id-td-"))
-    {
-      document.querySelectorAll('tr').forEach(element => element.removeAttribute('id'));
-      let positionI_0 = event.target.className;
-      let positionI = positionI_0.replace("id-td-", '')
-      event.target.parentElement.id="selected-tr";
-      clickCounter++;
-      if(clickCounter === 1)
+    {      
+      if(clickCounter === 0)
       {
-        $(document).unbind('click', clickEvent);
-        clickCounter = 0;
+        document.querySelectorAll('tr').forEach(element => element.removeAttribute('id'));
+        let positionI_0 = event.target.className;
+        let positionI = positionI_0.replace("id-td-", '')
+        event.target.parentElement.id="selected-tr";
+        clickCounter++;
+        let children = Array.from(document.getElementById('selected-tr').children);
+        children.forEach(element => values.push(element.innerHTML));
+        //console.log(children);
+  
+        let index0 = values.indexOf('active');
+        if (index0 !== -1) // returns -1 if value was not found in the array
+        values[index0] = '1';
+        let index1 = values.indexOf('inactive');
+        if (index1 !== -1)
+        values[index1] = '';
+        let index2 = values.indexOf('admin');
+        if (index2 !== -1)
+        values[index2] = 'ROLE_ADMIN';
+        let index3 = values.indexOf('user');
+        if (index3 !== -1)
+        values[index3] = 'ROLE_USER';
+  
+        //console.log(values); // oldValues
+  
+        children[0].innerHTML="Change";
+        children[0].style.color="white"
+  
+        let select0 = document.createElement('select');
+        select0.id="select-acc-status";
+        let option0 = document.createElement('option');
+        option0.innerHTML = "active";
+        let option1 = document.createElement('option');
+        option1.innerHTML = "inactive";
+  
+        if(values[4] === "1")
+        {
+          select0.appendChild(option0);
+          select0.appendChild(option1);
+        }
+        else
+        {
+          select0.appendChild(option1);
+          select0.appendChild(option0);
+        }
+        children[4].innerHTML = '';
+        children[4].appendChild(select0)
+        accStatus = values[4];
+        if(document.getElementById('select-acc-status') != null)
+        {
+          document.getElementById('select-acc-status').addEventListener('change', function() 
+          {
+            if(this.value === "active")
+            accStatus = "1";
+            if(this.value === "inactive")
+            accStatus = "";
+          });
+        }
+  
+        let select1 = document.createElement('select');
+        select1.id="select-role";
+        let option2 = document.createElement('option');
+        option2.innerHTML = "user";
+        let option3 = document.createElement('option');
+        option3.innerHTML = "admin";
+  
+        if(values[5] == "ROLE_ADMIN")
+        {
+          select1.appendChild(option3);
+          select1.appendChild(option2);
+        }
+        else
+        {
+          select1.appendChild(option2);
+          select1.appendChild(option3);
+        }
+  
+        children[5].innerHTML = '';
+        children[5].appendChild(select1)
+  
+        role = values[5];
+  
+        if(document.getElementById('select-role') != null)
+        {
+          document.getElementById('select-role').addEventListener('change', function() 
+          {
+            if(this.value === "admin")
+            role = "ROLE_ADMIN"
+            if(this.value === "user")
+            role = "ROLE_USER"
+          });
+        }
+  
+        let select3 = document.createElement('select');
+        select3.id="selectCity";
+        children[3].innerHTML = '';
+        children[3].appendChild(select3)
+        loadCityOptionsWithChosenOne(values[3]);
+
+        city=values[3];
+
+        if(document.getElementById('selectCity') != null)
+        {
+          document.getElementById('selectCity').addEventListener('change', function() 
+          {
+            city = this.value;
+          });
+        }
+  
+        name = values[1];
+        let input0 = document.createElement('input');
+        input0.id="input0";
+        input0.value=name;
+        children[1].innerHTML = '';
+        children[1].appendChild(input0);
+  
+        if(document.getElementById('input0') != null)
+        {
+          document.getElementById('input0').addEventListener('change', function() 
+          {
+            name = this.value;
+          });
+        }
+  
+        email = values[2];
+        let input1 = document.createElement('input');
+        input1.id="input1";
+        input1.value=email;
+        children[2].innerHTML = '';
+        children[2].appendChild(input1);
+  
+        if(document.getElementById('input1') != null)
+        {
+          document.getElementById('input1').addEventListener('change', function() 
+          {
+            email = this.value;
+          });
+        }
       }
-      let children = Array.from(document.getElementById('selected-tr').children);
-      children.forEach(element => values.push(element.innerHTML));
-      //console.log(children);
-
-      let index0 = values.indexOf('active');
-      if (index0 !== -1) // returns -1 if value was not found in the array
-      values[index0] = '1';
-      let index1 = values.indexOf('inactive');
-      if (index1 !== -1)
-      values[index1] = '';
-      let index2 = values.indexOf('admin');
-      if (index2 !== -1)
-      values[index2] = 'ROLE_ADMIN';
-      let index3 = values.indexOf('user');
-      if (index3 !== -1)
-      values[index3] = 'ROLE_USER';
-
-      //console.log(values); // oldValues
-
-      let select0 = document.createElement('select');
-      select0.id="select-acc-status";
-      let option0 = document.createElement('option');
-      option0.innerHTML = "active";
-      let option1 = document.createElement('option');
-      option1.innerHTML = "inactive";
-
-      select0.appendChild(option0);
-      select0.appendChild(option1);
-      children[4].innerHTML = '';
-      children[4].appendChild(select0)
-
-      let select1 = document.createElement('select');
-      select1.id="select-role";
-      let option2 = document.createElement('option');
-      option2.innerHTML = "user";
-      let option3 = document.createElement('option');
-      option3.innerHTML = "admin";
-
-      select1.appendChild(option2);
-      select1.appendChild(option3);
-      children[5].innerHTML = '';
-      children[5].appendChild(select1)
-
-      let select3 = document.createElement('select');
-      select3.id="selectCity";
-      children[3].innerHTML = '';
-      children[3].appendChild(select3)
-      loadCityOptions();
-
-      let input0 = document.createElement('input');
-      input0.id="input0";
-      children[1].innerHTML = '';
-      children[1].appendChild(input0);
-
-      let input1 = document.createElement('input');
-      input1.id="input1";
-      children[2].innerHTML = '';
-      children[2].appendChild(input1);
+      else if(clickCounter === 1)
+      {
+        console.log(name);
+        console.log(email);
+        console.log(city);
+        console.log(accStatus);
+        console.log(role);
+        //$(document).unbind('click', clickEvent);
+      }
     }
   };
   $(document).on(
@@ -1532,11 +1750,6 @@ async function LoadEmployeeTable()
       //console.log(response);
       page__main__container.appendChild(buildHtmlTablePackets(response));
     })
-}
-
-function changeEmployeeProfile()
-{
-  //....
 }
 // ------------------------------------------------End of browse employees functions--------------------------------------------------------
 
