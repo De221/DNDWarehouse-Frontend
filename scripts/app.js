@@ -1934,8 +1934,9 @@ function addCity()
 
 // ------------------------------------------------Start of User-HOME Functions------------------------------------------------------
 
-function welcomeHeader()
+async function welcomeHeader()
 {
+  await getUserInfo();
   let container = document.querySelector('#page__main__container');
   let h3 = document.createElement('h3');
   h3.className="information__header";
