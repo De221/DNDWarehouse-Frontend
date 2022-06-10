@@ -1936,13 +1936,16 @@ function addCity()
 
 async function welcomeHeader()
 {
-  await getUserInfo();
-  let container = document.querySelector('#page__main__container');
-  let h3 = document.createElement('h3');
-  h3.className="information__header";
-  h3.id="index-header3";
-  h3.innerHTML="Welcome, " + localStorage.getItem('fullName') + "!";
-  container.appendChild(h3);
+  await getUserInfo().then
+  {
+    let container = document.querySelector('#page__main__container');
+
+    let h3 = document.createElement('h3');
+    h3.className="information__header";
+    h3.id="index-header3";
+    h3.innerHTML="Welcome, " + localStorage.getItem('fullName') + "!";
+    container.appendChild(h3);
+  }
 }
 
 window.addEventListener("load", () => {
