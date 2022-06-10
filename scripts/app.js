@@ -1978,12 +1978,12 @@ async function welcomeHeader()
                              let block = document.getElementById("user-name");
                              block.textContent += text3;
 
-                            let container = document.querySelector('#page__main__container');
-                            let h3 = document.createElement('h3');
-                            h3.className="information__header";
-                            h3.id="index-header3";
-                            h3.innerHTML="Welcome, " + localStorage.getItem('fullName') + "!";
-                            container.appendChild(h3);
+                            // let container = document.querySelector('#page__main__container');                NOT WORKING
+                            // let h3 = document.createElement('h3');
+                            // h3.className="information__header";
+                            // h3.id="index-header3";
+                            // h3.innerHTML="Welcome, " + localStorage.getItem('fullName') + "!";
+                            // container.appendChild(h3);
                         })
                         })
                 })
