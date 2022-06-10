@@ -1936,16 +1936,58 @@ function addCity()
 
 async function welcomeHeader()
 {
-  await getUserInfo().then
+  if(localStorage.getItem('jwtToken') != 'null' && localStorage.getItem('jwtToken') != null)
   {
-    let container = document.querySelector('#page__main__container');
+    const myHeaders = new Headers();
+    myHeaders.append('Authorization', localStorage.getItem('jwtToken'))
 
-    let h3 = document.createElement('h3');
-    h3.className="information__header";
-    h3.id="index-header3";
-    h3.innerHTML="Welcome, " + localStorage.getItem('fullName') + "!";
-    container.appendChild(h3);
-  }
+    fetch('http://localhost:8080/currentUser/getRole',
+    {
+      method: 'GET',
+      headers: myHeaders,
+    })
+    .then(response => response.text())
+    .then(text => 
+        { 
+          if(text.startsWith('[ROLE_ADMIN]'))
+          text1 = "Admin ";
+          if(text.startsWith('[ROLE_USER]'))
+          text1 = "User ";
+            let block = document.getElementById("user-name");
+            block.textContent += text1;
+            localStorage.setItem('role', text1.slice(0, -1));
+
+            fetch('http://localhost:8080/currentUser/getEmail',
+            {
+              method: 'GET',
+              headers: myHeaders,
+            })
+            .then(response2 => response2.text())
+            .then(text2 => 
+                { 
+                  localStorage.setItem('email', text2);
+                    fetch('http://localhost:8080/employee/findByEmail?email=' + text2,
+                    {
+                      method: 'GET',
+                      headers: myHeaders,
+                    })
+                    .then(response3 => response3.text())
+                    .then(text3 => 
+                        { 
+                          localStorage.setItem('fullName', text3);
+                             let block = document.getElementById("user-name");
+                             block.textContent += text3;
+
+                            let container = document.querySelector('#page__main__container');
+                            let h3 = document.createElement('h3');
+                            h3.className="information__header";
+                            h3.id="index-header3";
+                            h3.innerHTML="Welcome, " + localStorage.getItem('fullName') + "!";
+                            container.appendChild(h3);
+                        })
+                        })
+                })
+  } 
 }
 
 window.addEventListener("load", () => {
