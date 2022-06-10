@@ -641,14 +641,25 @@ window.addEventListener('mouseover', function ( event )
   }
 });
 //----------------------------------------------------------------------------Start of change employee profile-----------------------------------------------------------------------
+var activatedChange = 0;
+var clickEvent;
 window.addEventListener("load", () => {
   let element = document.querySelector("#change-emp-profile");
   if(typeof(element) != 'undefined' && element != null)
   {
     document.querySelector("#change-emp-profile").addEventListener("click", e => 
     {
-      reLoadEmployeeTableWithGreenIds();
-      changeEmployeeProfile();
+      if(activatedChange == 0)
+      {
+        reLoadEmployeeTableWithGreenIds();
+        changeEmployeeProfile();
+      }
+      else
+      {
+        $(document).unbind('click', clickEvent);
+        activatedChange = 0;
+        reLoadEmployeeTable()
+      }
     });
   } 
 });
@@ -791,10 +802,11 @@ async function loadCityOptionsWithChosenOne(city)
 
 function changeEmployeeProfile()
 {
+  activatedChange = 1;
   let clickCounter = 0;
   let values = [];
   var accStatus, role, city, name, email;
-  let clickEvent = function(event) {
+  clickEvent = function(event) {
     if(event.target.className.startsWith("id-td-"))
     {      
       if(clickCounter === 0)
@@ -837,15 +849,17 @@ function changeEmployeeProfile()
         {
           select0.appendChild(option0);
           select0.appendChild(option1);
+          accStatus = values[4];
         }
         else
         {
           select0.appendChild(option1);
           select0.appendChild(option0);
+          accStatus = "0";
         }
         children[4].innerHTML = '';
         children[4].appendChild(select0)
-        accStatus = values[4];
+        
         if(document.getElementById('select-acc-status') != null)
         {
           document.getElementById('select-acc-status').addEventListener('change', function() 
@@ -853,7 +867,7 @@ function changeEmployeeProfile()
             if(this.value === "active")
             accStatus = "1";
             if(this.value === "inactive")
-            accStatus = "";
+            accStatus = "0";
           });
         }
   
@@ -939,19 +953,45 @@ function changeEmployeeProfile()
       }
       else if(clickCounter === 1)
       {
-        console.log(name);
-        console.log(email);
-        console.log(city);
-        console.log(accStatus);
-        console.log(role);
-        //$(document).unbind('click', clickEvent);
+        // console.log(name);
+        // console.log(email);
+        // console.log(city);
+        // console.log(accStatus);
+        // console.log(role);
+
+        let params = 'oldEmail=' + values[2] + '&' + 'name=' + name + '&' + 'email=' + email + '&' + 'city=' + city + '&' + 'accStatus=' + accStatus + '&' + 'role=' + role;
+        let request = new XMLHttpRequest();
+        request.open("POST", "http://localhost:8080/employee/changeEmployeeProfile?" + params, true);
+        request.setRequestHeader('Authorization', localStorage.getItem('jwtToken'));
+        request.setRequestHeader("Accept", "application/json");
+        request.setRequestHeader('Content-Type', 'application/json');
+        request.onload = () => 
+        {
+          if(request.responseText.includes("Employee account modified successfully"))
+          {
+            reLoadEmployeeTable();
+          }
+          else if(request.responseText === "Incorrect HTTP request params!")
+          {
+            alert("Bad input!");
+          }
+          else
+          {
+            reLoadEmployeeTable();
+            alert("This employee is currently hired for a task.\nChange its city when the task is finished.\nOther account details were changed successfully.");        
+          }
+        }
+        request.send();
+        counter = 0;
+        $(document).unbind('click', clickEvent);
+        activatedChange = 0;
       }
     }
   };
-  $(document).on(
-    {
-    click: clickEvent         
-    }, $(document));
+    $(document).on(
+      {
+      click:clickEvent      
+      }, $(document));
 }
 //----------------------------------------------------------------------------End of change employee profile-----------------------------------------------------------------------
 
@@ -985,7 +1025,10 @@ function reLoadEmployeeTable()
   $('.warehouse__icon').remove();
   $('#page__main__container').removeClass('warehouse__icons__container');
   $('#page__main__container').addClass('page__information');
-  LoadEmployeeTable();
+  if(activatedChange == 0)
+    LoadEmployeeTable();
+  else
+    reLoadEmployeeTableWithGreenIds();
 }
 function reLoadWarehousesTable()
 {
